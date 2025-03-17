@@ -1,12 +1,10 @@
-import React from 'react';
+import Cart from '../../components/Cart';
 
-const Carrinho = () => {
+export default function CarrinhoPage() {
   return (
     <div>
-      <h1>Meu Carrinho</h1>
-      {}
+      <h1 className="text-3xl font-bold mb-4">Carrinho</h1>
+      <Cart />
     </div>
   );
-};
-
-export default Carrinho;
+}

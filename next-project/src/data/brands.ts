@@ -1,0 +1,16 @@
+export const brands = [
+  { id: 1, name: 'Rolex' },
+  { id: 2, name: 'Omega' },
+  { id: 3, name: 'Tag Heuer' },
+  { id: 4, name: 'Casio' },
+  { id: 5, name: 'Seiko' },
+  { id: 6, name: 'Tissot' },
+  { id: 7, name: 'Fossil' },
+  { id: 8, name: 'Michael Kors' },
+  { id: 9, name: 'Balmain' },
+  { id: 10, name: 'Gant' },
+  { id: 11, name: 'Breitling' },
+  { id: 12, name: 'Longines' },
+  { id: 13, name: 'Audemars Piguet' },
+  { id: 14, name: 'IWC' },
+  ];

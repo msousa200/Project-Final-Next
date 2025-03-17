@@ -1,21 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
+  --font-family: 'Frank Ruhl Libre', serif;
   --font-geist-sans: 'Geist Sans', sans-serif;
   --font-geist-mono: 'Geist Mono', monospace;
 }
 
 body {
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-family);
   margin: 0;
   padding: 0;
   background-color: white;
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 1.5rem; 
+  @apply md:text-2xl; 
   color: #333;
 }
 
 p {
-  font-size: 1rem;
+  font-size: 0.875rem; 
+  @apply md:text-base; 
   color: #666;
+}
+
+main {
+  flex: 1; 
+  padding-bottom: 40px; 
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
