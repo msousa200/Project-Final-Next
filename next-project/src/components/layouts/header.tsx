@@ -8,11 +8,19 @@ import { RootState } from '@/app/store';
 import { clearUser, setUser } from '@/features/cartSlice';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import { getProducts } from '@/data/products'; 
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   const userId = useSelector((state: RootState) => state.cart.userId);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -21,7 +29,92 @@ const Header = () => {
     state.cart.items.reduce((total, item) => total + item.quantity, 0)
   );
   const { data: session, status } = useSession(); 
-  const isLoading = status === "loading";
+  const isAuthenticated = !!session?.user;
+
+  const fetchSuggestions = async (query: string) => {
+    if (!query || query.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+  
+    try {
+      const products = await getProducts();
+      
+      const uniqueWords = new Set<string>();
+      
+      products.forEach(product => {
+        const nameWords = product.name.toLowerCase().split(/\s+/);
+        const descWords = product.description.toLowerCase().split(/\s+/);
+        
+        const allWords = [...nameWords, ...descWords];
+        
+        allWords
+          .filter(word => 
+            word.startsWith(query.toLowerCase()) && 
+            word.length >= 3 && 
+            !["com", "para", "que", "dos", "das", "por", "uma"].includes(word)
+          )
+          .forEach(word => uniqueWords.add(word.charAt(0).toUpperCase() + word.slice(1))); 
+      });
+      
+      const wordSuggestions = Array.from(uniqueWords)
+        .sort()
+        .slice(0, 6); 
+      
+      setSuggestions(wordSuggestions);
+      setShowSuggestions(wordSuggestions.length > 0);
+    } catch (error) {
+      console.error('Erro ao buscar sugestões:', error);
+      setSuggestions([]);
+    }
+  };
+
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (searchQuery) {
+        fetchSuggestions(searchQuery);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        suggestionRef.current && 
+        !suggestionRef.current.contains(event.target as Node) &&
+        searchInputRef.current && 
+        !searchInputRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSuggestionClick = async (suggestion: string) => {
+    try {
+      await router.push(`/pesquisa?q=${encodeURIComponent(suggestion.trim())}`);
+      
+      setSearchQuery('');
+      setShowSuggestions(false);
+      
+      if (isMenuOpen) {
+        closeMenu();
+      }
+    } catch (error) {
+      console.error('Erro ao redirecionar para a página de pesquisa:', error);
+    }
+  };
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -39,9 +132,39 @@ const Header = () => {
     }
   }, [session, dispatch]);
   
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    window.location.href = `/pesquisa?q=${encodeURIComponent(searchQuery)}`;
+
+    if (!searchQuery.trim()) {
+      alert('Por favor, insira um termo de pesquisa.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await router.push(`/pesquisa?q=${encodeURIComponent(searchQuery.trim())}`);
+
+      setSearchQuery('');
+      setShowSuggestions(false);
+
+      if (isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    } catch (error) {
+      console.error('Erro ao redirecionar para a página de pesquisa:', error);
+      alert('Ocorreu um erro ao processar sua pesquisa. Tente novamente.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setShowSuggestions(false);
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
   };
 
   const toggleMenu = () => {
@@ -70,8 +193,6 @@ const Header = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  const isAuthenticated = !!session?.user;
 
   return (
     <>
@@ -117,14 +238,74 @@ const Header = () => {
         <div className="hidden md:flex gap-6 items-center flex-1 justify-end">
           {/* Barra de Pesquisa */}
           <div className="flex items-center gap-2">
-            <form onSubmit={handleSearch}>
+            <form onSubmit={handleSearch} className="relative">
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder="Pesquisar..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  // Se o campo ficar vazio, esconde as sugestões imediatamente
+                  if (!e.target.value.trim()) {
+                    setShowSuggestions(false);
+                  }
+                }}
+                onFocus={() => {
+                  if (searchQuery.trim() && suggestions.length > 0) 
+                    setShowSuggestions(true);
+                }}
                 className="w-[120px] lg:w-[200px] px-3 py-2 border border-[#e0e0e0] rounded-full text-sm outline-none transition-all focus:border-black focus:shadow-md"
+                aria-label="Campo de pesquisa"
               />
+              
+              {/* Botão X para limpar a pesquisa (aparece apenas quando há texto) */}
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                  aria-label="Limpar pesquisa"
+                >
+                  <FaTimes />
+                </button>
+              )}
+              
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#333] hover:text-black transition-colors"
+                aria-label="Pesquisar"
+              >
+                {isLoading ? (
+                  <div className="animate-spin">
+                    <FaSearch />
+                  </div>
+                ) : (
+                  <FaSearch />
+                )}
+              </button>
+              
+              {/* Caixa de sugestões */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div 
+                  ref={suggestionRef}
+                  className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                >
+                  <div className="py-1 px-3 text-xs text-gray-500 border-b">Sugestões:</div>
+                  <ul className="py-1">
+                    {suggestions.map((suggestion, index) => (
+                      <li 
+                        key={index} 
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700 flex items-center"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                      >
+                        <FaSearch className="text-gray-400 mr-2 text-xs" />
+                        <span>{suggestion}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </form>
           </div>
 
@@ -228,14 +409,72 @@ const Header = () => {
 
               {/* Barra de Pesquisa Mobile */}
               <div className="mt-4 w-full px-4">
-                <form onSubmit={handleSearch}>
+                <form onSubmit={handleSearch} className="relative">
                   <input
                     type="text"
                     placeholder="Pesquisar..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      if (!e.target.value.trim()) {
+                        setShowSuggestions(false);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (searchQuery.trim() && suggestions.length > 0) 
+                        setShowSuggestions(true);
+                    }}
                     className="w-full px-4 py-2 border border-[#e0e0e0] rounded-full text-sm outline-none transition-all focus:border-black focus:shadow-md"
                   />
+                  
+                  {/* Botão X para limpar a pesquisa mobile */}
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={handleClearSearch}
+                      className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                      aria-label="Limpar pesquisa"
+                    >
+                      <FaTimes />
+                    </button>
+                  )}
+                  
+                  {/* Botão de busca */}
+                  <button
+                    type="submit"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#333] hover:text-black transition-colors"
+                    aria-label="Pesquisar"
+                  >
+                    {isLoading ? (
+                      <div className="animate-spin">
+                        <FaSearch />
+                      </div>
+                    ) : (
+                      <FaSearch />
+                    )}
+                  </button>
+                  
+                  {/* Sugestões para mobile */}
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div 
+                      ref={suggestionRef}
+                      className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                    >
+                      <div className="py-1 px-3 text-xs text-gray-500 border-b">Sugestões:</div>
+                      <ul className="py-1">
+                        {suggestions.map((suggestion, index) => (
+                          <li 
+                            key={index} 
+                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700 flex items-center"
+                            onClick={() => handleSuggestionClick(suggestion)}
+                          >
+                            <FaSearch className="text-gray-400 mr-2 text-xs" />
+                            <span>{suggestion}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </form>
               </div>
             </div>

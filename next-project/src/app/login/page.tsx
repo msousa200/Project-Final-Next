@@ -16,25 +16,35 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
-    const callbackUrl = searchParams.get("callbackUrl") || "/";
-
+    
     try {
+      const callbackUrl = searchParams?.get("callbackUrl") || "/";
+      
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
+        callbackUrl 
       });
-
+      
       if (result?.error) {
-        toast.error(result.error || "Erro ao fazer login");
+        if (result.error === "CredentialsSignin") {
+          toast.error("Email ou senha incorretos");
+        } else {
+          toast.error(`Erro: ${result.error}`);
+        }
       } else {
-        toast.success("Login efetuado com sucesso!");
-        router.push(callbackUrl);
+        toast.success("Login realizado com sucesso!");
+        
+        if (callbackUrl.includes("/checkout")) {
+          router.push("/checkout");
+        } else {
+          router.push("/");
+        }
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      toast.error("Ocorreu um erro ao tentar fazer login");
+      toast.error("Ocorreu um erro ao processar o login");
     } finally {
       setIsLoading(false);
     }

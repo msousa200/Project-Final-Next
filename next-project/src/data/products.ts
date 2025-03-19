@@ -80,7 +80,7 @@ export async function getProducts(): Promise<Product[]> {
       image:
         "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/b931ec91606cb7355a8b31bcc42f0b77/G/1/G193005_.png",
       description:
-        "O Gant Time Seneca apresenta um design clássico e versátil...",
+        "O Gant Time Seneca apresenta um design clássico e versátil dourado...",
       brandId: 10,
       categoryId: 2,
     },

@@ -14,32 +14,25 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         try {
-          if (!credentials?.email || !credentials?.password) return null;
-      
-          console.log("Email fornecido:", credentials.email);
-          console.log("Senha fornecida:", credentials.password);
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email e senha são obrigatórios");
+          }
       
           const user = await prisma.user.findUnique({
             where: { email: credentials.email },
           });
       
           if (!user) {
-            console.log("Usuário não encontrado");
-            return null;
+            throw new Error("Email não encontrado");
           }
-      
-          console.log("Hash armazenado:", user.password);
       
           const passwordMatch = await bcrypt.compare(
             credentials.password,
             user.password
           );
       
-          console.log("Senha válida?", passwordMatch);
-      
           if (!passwordMatch) {
-            console.log("Senha incorreta");
-            return null;
+            throw new Error("Senha incorreta");
           }
       
           return {
@@ -49,7 +42,7 @@ export const authOptions: NextAuthOptions = {
           };
         } catch (error) {
           console.error("Erro no authorize:", error);
-          return null;
+          throw error; 
         }
       }
     }),
@@ -78,6 +71,37 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      try {
+        if (!url) return baseUrl || '/';
+    
+        try {
+          new URL(url);
+        } catch {
+          if (url.startsWith('/')) {
+            url = `${baseUrl}${url.startsWith('/') ? url : `/${url}`}`;
+          } else {
+            return baseUrl || '/';
+          }
+        }
+    
+        if (url.includes('/checkout')) {
+          return url;
+        }
+        
+        if (url.startsWith(baseUrl) || url.startsWith('/')) {
+          if (url.includes('/login') || url === baseUrl) {
+            return '/';
+          }
+          return url;
+        }
+        
+        return baseUrl || '/';
+      } catch (error) {
+        console.error("URL redirection error:", error);
+        return baseUrl || '/';
+      }
+    }
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

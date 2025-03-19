@@ -11,7 +11,6 @@ export default function SuccessPage() {
   const dispatch = useDispatch();
   
   useEffect(() => {
-    // Limpar o carrinho após uma compra bem-sucedida
     dispatch(clearCart());
   }, [dispatch]);
 
