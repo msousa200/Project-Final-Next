@@ -45,9 +45,7 @@ export default function ProductPage() {
 
         if (!foundProduct) {
           toast.error("Produto não encontrado");
-          if (router.pathname !== "/") {
-            router.push("/");
-          }
+          router.push("/");
           return;
         }
 

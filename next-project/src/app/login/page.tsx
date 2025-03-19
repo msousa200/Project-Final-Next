@@ -1,40 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation"; 
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import bcrypt from "bcryptjs";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams(); 
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
+    const callbackUrl = searchParams.get("callbackUrl") || "/";
+
     try {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find((u: any) => u.email === email);
-
-      if (!user) {
-        toast.error("Email não encontrado");
-        setIsLoading(false);
-        return;
-      }
-
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      
-      if (!isPasswordValid) {
-        toast.error("Senha incorreta");
-        setIsLoading(false);
-        return;
-      }
-
       const result = await signIn("credentials", {
         email,
         password,
@@ -42,14 +27,14 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        toast.error("Erro ao fazer login");
+        toast.error(result.error || "Erro ao fazer login");
       } else {
-        toast.success("Login realizado com sucesso!");
-        router.push("/");
+        toast.success("Login efetuado com sucesso!");
+        router.push(callbackUrl);
       }
     } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Erro ao fazer login");
+      console.error("Erro ao fazer login:", error);
+      toast.error("Ocorreu um erro ao tentar fazer login");
     } finally {
       setIsLoading(false);
     }

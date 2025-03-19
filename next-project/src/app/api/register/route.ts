@@ -4,7 +4,29 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, name, dateOfBirth } = await req.json();
+
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Email e senha são obrigatórios" },
+        { status: 400 }
+      );
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: "Email inválido" },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: "A senha deve ter pelo menos 6 caracteres" },
+        { status: 400 }
+      );
+    }
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -16,16 +38,30 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({
-      data: { email, password: hashedPassword },
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name: name || email.split("@")[0], 
+        dateOfBirth: dateOfBirth || null, 
+      },
     });
 
+    console.log("Usuário criado com sucesso:", user);
+
     return NextResponse.json(
-      { message: "Utilizador criado com sucesso" },
+      {
+        message: "Utilizador criado com sucesso",
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        },
+      },
       { status: 201 }
     );
   } catch (error) {
-    console.error(error);
+    console.error("Erro no registro:", error);
     return NextResponse.json({ error: "Erro no registo" }, { status: 500 });
   }
 }

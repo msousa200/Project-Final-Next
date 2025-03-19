@@ -58,31 +58,27 @@ export default function RegisterPage() {
         return;
       }
 
-      const hashedPassword = await bcrypt.hash(formData.password, 10);
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          dateOfBirth: formData.dateOfBirth
+        })
+      });
 
-      const newUser = {
-        id: Date.now().toString(),
-        name: formData.name,
-        email: formData.email,
-        password: hashedPassword,
-      };
-
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-
-      if (users.some((u: any) => u.email === formData.email)) {
-        toast.error("Email já cadastrado");
-        setIsLoading(false);
-        return;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Erro ao registrar');
       }
 
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-
-      toast.success("Registro realizado com sucesso!");
-      router.push("/login");
+      toast.success('Conta criada com sucesso!');
+      router.push('/login');
     } catch (error) {
-      console.error("Register error:", error);
-      toast.error("Erro ao realizar registro");
+      toast.error(error instanceof Error ? error.message : 'Erro ao criar conta');
+      console.error('Registration error:', error);
     } finally {
       setIsLoading(false);
     }

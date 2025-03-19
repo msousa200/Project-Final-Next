@@ -20,18 +20,25 @@ const Header = () => {
   const cartItemsCount = useSelector((state: RootState) => 
     state.cart.items.reduce((total, item) => total + item.quantity, 0)
   );
-  const { data: session } = useSession(); 
+  const { data: session, status } = useSession(); 
+  const isLoading = status === "loading";
 
   useEffect(() => {
-    if (session?.user) {
-      dispatch(setUser({
-        id: session.user.id as string,
-        email: session.user.email as string,
-        name: session.user.name as string
-      }));
+    if (session?.user?.id) {
+      fetch('/api/me')
+        .then(res => res.json())
+        .then(userData => {
+          dispatch(setUser({
+            id: userData.id,
+            email: userData.email,
+            name: userData.name,
+            dateOfBirth: userData.dateOfBirth || "", 
+          }));
+        })
+        .catch(error => console.error("Erro ao buscar dados do usuário:", error));
     }
   }, [session, dispatch]);
-
+  
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     window.location.href = `/pesquisa?q=${encodeURIComponent(searchQuery)}`;
@@ -64,7 +71,7 @@ const Header = () => {
     };
   }, []);
 
-  const isAuthenticated = session?.user || userId;
+  const isAuthenticated = !!session?.user;
 
   return (
     <>
@@ -134,7 +141,7 @@ const Header = () => {
             </button>
 
             {/* Dropdown do Perfil */}
-            <div className="absolute right-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+            <div className={`absolute right-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg transition-all duration-200 ${isProfileOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
               {isAuthenticated ? (
                 <>
                   <Link
@@ -185,7 +192,7 @@ const Header = () => {
         {/* Ícones (Mobile) */}
         <div className="md:hidden flex gap-4 items-center">
           <Link
-            href={userId ? "/profile" : "/login"}
+            href={isAuthenticated ? "/profile" : "/login"}
             className="text-[#333] text-2xl transition-colors hover:text-black p-2"
           >
             <FaUser aria-label="Perfil" />

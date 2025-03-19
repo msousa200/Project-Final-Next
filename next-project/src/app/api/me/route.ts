@@ -1,33 +1,78 @@
-import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
 
-const SECRET_KEY = process.env.AUTH_SECRET || "super_secret_key";
-
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const token = req.headers.get("cookie")?.split("f2token=")[1];
+    const session = await getServerSession(authOptions);
 
-    if (!token) {
-      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Não autenticado" },
+        { status: 401 }
+      );
     }
 
-    const decoded: any = jwt.verify(token, SECRET_KEY);
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-      select: { id: true, email: true },
+    const userData = await prisma.user.findUnique({
+      where: { id: String(session.user.id) },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        dateOfBirth: true
+      }
     });
 
-    if (!user) {
+    if (!userData) {
       return NextResponse.json(
-        { error: "Utilizador não encontrado" },
+        { error: "Usuário não encontrado" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(user);
+    return NextResponse.json({
+      id: userData.id,
+      email: userData.email,
+      name: userData.name,
+      dateOfBirth: userData.dateOfBirth
+    });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Token inválido" }, { status: 401 });
+    console.error("Erro ao obter dados do usuário:", error);
+    return NextResponse.json(
+      { error: "Erro interno do servidor" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
+
+    const { name, email, dateOfBirth } = await req.json();
+
+    const updatedUser = await prisma.user.update({
+      where: { id: session.user.id as string },
+      data: {
+        name,
+        dateOfBirth,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        dateOfBirth: true
+      }
+    });
+
+    return NextResponse.json(updatedUser);
+  } catch (error) {
+    console.error("Erro ao atualizar usuário:", error);
+    return NextResponse.json({ error: "Erro ao atualizar perfil" }, { status: 500 });
   }
 }

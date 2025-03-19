@@ -1,8 +1,10 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { NextAuthOptions } from "next-auth";
+import prisma from "@/lib/prisma";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -12,34 +14,59 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-          if (!credentials?.email || !credentials?.password) {
+          if (!credentials?.email || !credentials?.password) return null;
+      
+          console.log("Email fornecido:", credentials.email);
+          console.log("Senha fornecida:", credentials.password);
+      
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          });
+      
+          if (!user) {
+            console.log("Usuário não encontrado");
             return null;
           }
-          
+      
+          console.log("Hash armazenado:", user.password);
+      
+          const passwordMatch = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+      
+          console.log("Senha válida?", passwordMatch);
+      
+          if (!passwordMatch) {
+            console.log("Senha incorreta");
+            return null;
+          }
+      
           return {
-            id: credentials.email,
-            email: credentials.email,
-            name: credentials.email.split('@')[0]
+            id: user.id,
+            email: user.email,
+            name: user.name,
           };
         } catch (error) {
-          console.error("Auth error:", error);
+          console.error("Erro no authorize:", error);
           return null;
         }
-      },
+      }
     }),
   ],
   pages: {
-    signIn: "/login",
+    signIn: "/login", 
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, 
+    maxAge: 30 * 24 * 60 * 60,
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        token.name = user.name;
       }
       return token;
     },
@@ -47,6 +74,7 @@ export const authOptions = {
       if (session.user) {
         session.user.id = token.id;
         session.user.email = token.email as string;
+        session.user.name = token.name as string | undefined;
       }
       return session;
     },

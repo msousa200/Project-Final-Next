@@ -1,33 +1,30 @@
-"use client"; 
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/app/store';
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-interface RequireAuthProps {
-  children: React.ReactNode;
-}
-
-const RequireAuth = ({ children }: RequireAuthProps) => {
+export default function RequireAuth({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const userId = useSelector((state: RootState) => state.cart.userId); 
-
+  
   useEffect(() => {
-    if (!userId) {
-      router.push('/login'); 
+    if (status === "loading") {
+      return;
     }
-  }, [userId, router]);
-
-  if (!userId) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Por favor, faça login para acessar esta página.</p>
-      </div>
-    );
+    
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, status, router]);
+  
+  if (status === "loading") {
+    return <div className="flex items-center justify-center h-screen">Carregando...</div>;
   }
-
+  
+  if (!session) {
+    return null; 
+  }
+  
   return <>{children}</>;
-};
-
-export default RequireAuth;
+}

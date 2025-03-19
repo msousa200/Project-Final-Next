@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/app/store';
 import RequireAuth from '@/components/auth/RequireAuth';
-import { FaUser, FaEnvelope, FaCalendar, FaEdit } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaCalendar, FaEdit, FaShoppingBag } from 'react-icons/fa';
 import { updateUserData } from '@/features/cartSlice';
 import { toast } from 'react-hot-toast';
 
@@ -61,34 +61,34 @@ export default function ProfilePage() {
     setIsLoading(true);
 
     try {
-      if (!userData?.id) {
-        throw new Error('ID do usuário não encontrado');
+      const response = await fetch('/api/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: editForm.name,
+          dateOfBirth: editForm.dateOfBirth
+        })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Erro ao atualizar perfil');
       }
 
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const userIndex = users.findIndex((u: UserProfile) => u.id === userData.id);
-
-      if (userIndex === -1) {
-        throw new Error('Usuário não encontrado');
-      }
-
-      const updatedUser = {
-        ...users[userIndex],
-        ...editForm,
-      };
-      users[userIndex] = updatedUser;
-      localStorage.setItem('users', JSON.stringify(users));
+      const updatedUser = await response.json();
 
       dispatch(updateUserData({
-        id: userData.id,
-        ...editForm,
+        id: userData!.id,
+        email: userData!.email, 
+        name: updatedUser.name,
+        dateOfBirth: updatedUser.dateOfBirth
       }));
 
       setIsEditing(false);
       toast.success('Perfil atualizado com sucesso!');
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
-      toast.error('Erro ao atualizar perfil');
+      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar perfil');
     } finally {
       setIsLoading(false);
     }
@@ -135,10 +135,11 @@ export default function ProfilePage() {
                   <input
                     type="email"
                     name="email"
-                    value={editForm.email}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-2 focus:ring-black transition-all"
+                    value={userData?.email || ''} 
+                    disabled={true} 
+                    className="mt-1 block w-full rounded-md bg-gray-100 border-gray-300 shadow-sm focus:border-black focus:ring-2 focus:ring-black transition-all cursor-not-allowed"
                   />
+                  <p className="text-xs text-gray-500 mt-1">O email não pode ser alterado</p>
                 </div>
 
                 <div>
@@ -198,8 +199,29 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Data de Nascimento</p>
-                      <p className="font-medium text-gray-900">{userData?.dateOfBirth}</p>
+                      <p className="font-medium text-gray-900">
+                        {userData?.dateOfBirth ? formatDate(userData.dateOfBirth) : "Não informada"}
+                      </p>
                     </div>
+                  </div>
+                  
+                  {/* Nova seção de pedidos */}
+                  <div className="flex items-center justify-between gap-4 p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-black p-3 rounded-full">
+                        <FaShoppingBag className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Meus Pedidos</p>
+                        <p className="font-medium text-gray-900">Ver histórico de compras</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => router.push('/orders')} 
+                      className="bg-black text-white px-4 py-2 text-sm rounded-md hover:bg-gray-800 transition-all"
+                    >
+                      Ver Pedidos
+                    </button>
                   </div>
                 </div>
               </div>

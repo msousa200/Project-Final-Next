@@ -1,25 +1,25 @@
+"use client";
+
 import { configureStore } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage";
-import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import cartReducer from "@/features/cartSlice";
+import userReducer from "@/features/userSlice";
 
-const persistConfig = {
-  key: "root",
+const cartPersistConfig = {
+  key: 'cart',
   storage,
-  whitelist: ['cart'] 
+  whitelist: ['items', 'total'] 
 };
-
-const persistedReducer = persistReducer(persistConfig, cartReducer);
 
 export const store = configureStore({
   reducer: {
-    cart: persistedReducer,
+    cart: persistReducer(cartPersistConfig, cartReducer),
+    user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      serializableCheck: false, 
     }),
 });
 
