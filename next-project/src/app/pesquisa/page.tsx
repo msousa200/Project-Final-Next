@@ -7,6 +7,17 @@ import ProductGrid from '@/components/ProductGrid/ProductGrid';
 import BrandFilter from '@/components/BrandFilter/BrandFilter';
 import { Product, getProducts } from '@/data/products';
 
+const extractTextFromHTML = (html: string): string => {
+  // No ambiente do navegador
+  if (typeof window !== 'undefined') {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+  }
+  // Fallback para ambiente de servidor (SSR)
+  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+};
+
 export default function PesquisaPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -24,10 +35,15 @@ export default function PesquisaPage() {
         
         const allProducts = await getProducts();
         
-        const searchFilteredProducts = allProducts.filter(product => 
-          product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-          product.description.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        const searchFilteredProducts = allProducts.filter(product => {
+          // Extrair texto limpo da descrição HTML
+          const cleanDescription = product.description.includes('<') 
+            ? extractTextFromHTML(product.description)
+            : product.description;
+          
+          return product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                 cleanDescription.toLowerCase().includes(searchQuery.toLowerCase());
+        });
         
         setProducts(searchFilteredProducts);
         setFilteredProducts(searchFilteredProducts);

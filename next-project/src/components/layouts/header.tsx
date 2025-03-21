@@ -10,6 +10,17 @@ import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { getProducts } from '@/data/products'; 
 
+const extractTextFromHTML = (html: string): string => {
+  // No ambiente do navegador
+  if (typeof window !== 'undefined') {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+  }
+  // Fallback para ambiente de servidor (SSR)
+  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+};
+
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,30 +48,40 @@ const Header = () => {
       setShowSuggestions(false);
       return;
     }
-  
+
     try {
       const products = await getProducts();
       
+      // Conjunto para armazenar palavras únicas
       const uniqueWords = new Set<string>();
       
+      // Processar cada produto
       products.forEach(product => {
-        const nameWords = product.name.toLowerCase().split(/\s+/);
-        const descWords = product.description.toLowerCase().split(/\s+/);
+        // Extrair texto limpo da descrição HTML
+        const cleanDescription = product.description.includes('<') 
+          ? extractTextFromHTML(product.description)
+          : product.description;
         
-        const allWords = [...nameWords, ...descWords];
+        // Combinar nome e descrição limpa
+        const text = `${product.name} ${cleanDescription}`.toLowerCase();
         
+        // Extrair todas as palavras do texto
+        const allWords = text.split(/\s+/);
+        
+        // Filtrar palavras que começam com a consulta
         allWords
           .filter(word => 
             word.startsWith(query.toLowerCase()) && 
             word.length >= 3 && 
             !["com", "para", "que", "dos", "das", "por", "uma"].includes(word)
           )
-          .forEach(word => uniqueWords.add(word.charAt(0).toUpperCase() + word.slice(1))); 
+          .forEach(word => uniqueWords.add(word.charAt(0).toUpperCase() + word.slice(1)));
       });
       
+      // Converter para array, ordenar e limitar
       const wordSuggestions = Array.from(uniqueWords)
         .sort()
-        .slice(0, 6); 
+        .slice(0, 6);
       
       setSuggestions(wordSuggestions);
       setShowSuggestions(wordSuggestions.length > 0);

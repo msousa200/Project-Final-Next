@@ -62,3 +62,42 @@ main {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0 2rem;
+}
+
+.specs-table tr {
+  border-bottom: 1px solid #eee;
+}
+
+.specs-table tr:last-child {
+  border-bottom: none;
+}
+
+.specs-table td {
+  padding: 0.75rem 0.5rem;
+}
+
+.specs-table td:first-child {
+  font-weight: 500;
+  color: #333;
+  width: 40%;
+}
+
+.specs-table td:last-child {
+  color: #666;
+}
+
+.product-details h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.5rem 0 1rem;
+}
+
+.product-description {
+  margin-top: 1.5rem;
+  line-height: 1.6;
+}
