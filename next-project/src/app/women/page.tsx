@@ -5,14 +5,62 @@ import { Product, getProducts } from '@/data/products';
 import ProductGrid from '@/components/ProductGrid/ProductGrid';
 import BrandFilter from '@/components/BrandFilter/BrandFilter';
 import { FaSpinner } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
+
+// Helper para localStorage seguro
+const getLocalStorage = (key: string, defaultValue: any) => {
+  if (typeof window === 'undefined') {
+    return defaultValue;
+  }
+  
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : defaultValue;
+  } catch (error) {
+    console.error('Erro ao acessar localStorage:', error);
+    return defaultValue;
+  }
+};
+
+// Helper para salvar no localStorage com segurança
+const setLocalStorage = (key: string, value: any) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error('Erro ao salvar no localStorage:', error);
+  }
+};
 
 export default function WomenPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sortOption, setSortOption] = useState('newest');
+  const [isMounted, setIsMounted] = useState(false);
+  
   const router = useRouter();
 
+  // Marque quando o componente estiver montado no cliente
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Carregue os dados do localStorage apenas após a montagem
+  useEffect(() => {
+    if (isMounted) {
+      const savedBrands = getLocalStorage('womenSelectedBrands', []);
+      const savedSort = getLocalStorage('womenSortOption', 'newest');
+      
+      setSelectedBrands(savedBrands);
+      setSortOption(savedSort);
+    }
+  }, [isMounted]);
+
+  // Buscar produtos
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -21,6 +69,7 @@ export default function WomenPage() {
         setProducts(womenProducts);
       } catch (error) {
         console.error('Erro ao carregar produtos:', error);
+        toast.error('Erro ao carregar produtos');
       } finally {
         setIsLoading(false);
       }
@@ -29,12 +78,30 @@ export default function WomenPage() {
     fetchProducts();
   }, []);
 
+  // Salvar no localStorage quando os filtros mudarem
+  useEffect(() => {
+    if (isMounted) {
+      setLocalStorage('womenSelectedBrands', selectedBrands);
+    }
+  }, [selectedBrands, isMounted]);
+
+  useEffect(() => {
+    if (isMounted) {
+      setLocalStorage('womenSortOption', sortOption);
+    }
+  }, [sortOption, isMounted]);
+
   const handleBrandChange = (brandId: number) => {
     setSelectedBrands((prev) =>
       prev.includes(brandId)
         ? prev.filter((id) => id !== brandId)
         : [...prev, brandId]
     );
+  };
+
+  const handleClearFilters = () => {
+    setSelectedBrands([]);
+    setSortOption('newest');
   };
 
   const handleProductClick = (slug: string) => {
@@ -76,6 +143,7 @@ export default function WomenPage() {
             <BrandFilter
               selectedBrands={selectedBrands}
               onBrandChange={handleBrandChange}
+              onClearFilters={handleClearFilters}
             />
           </div>
 

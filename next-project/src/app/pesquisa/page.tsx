@@ -24,9 +24,36 @@ export default function PesquisaPage() {
   const [selectedBrands, setSelectedBrands] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sortOption, setSortOption] = useState('newest');
+  const [isClient, setIsClient] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
   const searchQuery = searchParams.get('q') || '';
+
+  // Verificar se estamos no cliente
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Carregar preferências salvas quando a página é carregada
+  useEffect(() => {
+    if (!isClient) return;
+
+    try {
+      // Carregar as marcas selecionadas do localStorage
+      const savedBrands = localStorage.getItem('searchSelectedBrands');
+      if (savedBrands) {
+        setSelectedBrands(JSON.parse(savedBrands));
+      }
+      
+      // Carregar a opção de ordenação do localStorage
+      const savedSortOption = localStorage.getItem('searchSortOption');
+      if (savedSortOption) {
+        setSortOption(savedSortOption);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar preferências:', error);
+    }
+  }, [isClient]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -63,6 +90,28 @@ export default function PesquisaPage() {
     }
   }, [searchQuery]);
 
+  // Salvar as marcas selecionadas no localStorage quando mudarem
+  useEffect(() => {
+    if (!isClient) return;
+    
+    try {
+      localStorage.setItem('searchSelectedBrands', JSON.stringify(selectedBrands));
+    } catch (error) {
+      console.error('Erro ao salvar preferências de marcas:', error);
+    }
+  }, [selectedBrands, isClient]);
+
+  // Salvar a opção de ordenação no localStorage quando mudar
+  useEffect(() => {
+    if (!isClient) return;
+    
+    try {
+      localStorage.setItem('searchSortOption', sortOption);
+    } catch (error) {
+      console.error('Erro ao salvar preferência de ordenação:', error);
+    }
+  }, [sortOption, isClient]);
+
   useEffect(() => {
     const brandFiltered = selectedBrands.length > 0
       ? products.filter((product) => selectedBrands.includes(product.brandId))
@@ -77,6 +126,11 @@ export default function PesquisaPage() {
         ? prev.filter((id) => id !== brandId)
         : [...prev, brandId]
     );
+  };
+
+  const handleClearFilters = () => {
+    setSelectedBrands([]);
+    setSortOption('newest');
   };
 
   const handleProductClick = (slug: string) => {
@@ -112,6 +166,7 @@ export default function PesquisaPage() {
             <BrandFilter
               selectedBrands={selectedBrands}
               onBrandChange={handleBrandChange}
+              onClearFilters={handleClearFilters}
             />
           </div>
 

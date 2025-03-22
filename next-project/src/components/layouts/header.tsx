@@ -2,13 +2,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaUser, FaShoppingCart, FaSearch, FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa';
+import { FaUser, FaShoppingCart, FaSearch, FaBars, FaTimes, FaSignOutAlt, FaArrowLeft } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/app/store';
 import { clearUser, setUser } from '@/features/cartSlice';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { getProducts } from '@/data/products'; 
+import { clearAllFilters } from '@/utils/filterUtils'; // Importe a função utilitária
 
 const extractTextFromHTML = (html: string): string => {
   // No ambiente do navegador
@@ -215,6 +216,52 @@ const Header = () => {
     };
   }, []);
 
+  // Adicionar usePathname para verificar a rota atual
+  const pathname = usePathname();
+  const isCheckoutPage = pathname === '/checkout';
+  
+  // Crie uma função para lidar com a navegação
+  const handleNavigation = () => {
+    // Limpa todos os filtros quando o usuário navega pelo header
+    clearAllFilters();
+  };
+
+  // Renderização condicional baseada na página atual
+  if (isCheckoutPage) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-[80px] md:h-[100px] flex items-center justify-between px-4 md:px-10 bg-[#d2d1cd] border-b border-[#e0e0e0] z-[1000] shadow-md">
+        {/* Botão Voltar ao Carrinho */}
+        <Link 
+          href="/carrinho" 
+          className="flex items-center justify-center px-3 py-2 rounded-md border border-gray-300 bg-white bg-opacity-80 text-[#333] hover:bg-opacity-100 hover:text-black transition-all shadow-sm hover:shadow md:border-none md:bg-transparent md:shadow-none md:justify-start"
+        >
+          <FaArrowLeft className="text-sm md:text-base md:mr-2" />
+          <span className="font-medium text-xs md:text-base ml-1 md:ml-0">
+            <span className="hidden md:inline">Voltar ao carrinho</span>
+            <span className="inline md:hidden">Voltar</span>
+          </span>
+        </Link>
+        
+        {/* Logo centralizado */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <Link href="/">
+            <Image
+              src="/logotipo.jpg"
+              alt="Logo da empresa"
+              width={180}
+              height={60}
+              className="max-w-[100px] md:max-w-[180px] h-auto"
+            />
+          </Link>
+        </div>
+        
+        {/* Espaço vazio para manter o balanceamento */}
+        <div className="w-[150px]"></div>
+      </div>
+    );
+  }
+
+  // Header normal para as outras páginas
   return (
     <>
       {/* Header Principal */}
@@ -228,15 +275,27 @@ const Header = () => {
 
         {/* Links do Menu (Desktop) */}
         <div className="hidden md:flex items-center gap-4 lg:gap-6 flex-1">
-          <Link href="/" className="text-[#333] font-medium text-sm md:text-base px-2 md:px-4 py-2 relative transition-colors hover:text-black">
+          <Link 
+            href="/" 
+            onClick={handleNavigation} 
+            className="text-[#333] font-medium text-sm md:text-base px-2 md:px-4 py-2 relative transition-colors hover:text-black"
+          >
             Home
             <span className="absolute left-2 md:left-4 right-2 md:right-4 bottom-0 h-[2px] bg-[#333] transform scale-x-0 transition-transform origin-left hover:scale-x-100"></span>
           </Link>
-          <Link href="/men" className="text-[#333] font-medium text-sm md:text-base px-2 md:px-4 py-2 relative transition-colors hover:text-black">
+          <Link 
+            href="/men" 
+            onClick={handleNavigation} 
+            className="text-[#333] font-medium text-sm md:text-base px-2 md:px-4 py-2 relative transition-colors hover:text-black"
+          >
             Men
             <span className="absolute left-2 md:left-4 right-2 md:right-4 bottom-0 h-[2px] bg-[#333] transform scale-x-0 transition-transform origin-left hover:scale-x-100"></span>
           </Link>
-          <Link href="/women" className="text-[#333] font-medium text-sm md:text-base px-2 md:px-4 py-2 relative transition-colors hover:text-black">
+          <Link 
+            href="/women" 
+            onClick={handleNavigation} 
+            className="text-[#333] font-medium text-sm md:text-base px-2 md:px-4 py-2 relative transition-colors hover:text-black"
+          >
             Women
             <span className="absolute left-2 md:left-4 right-2 md:right-4 bottom-0 h-[2px] bg-[#333] transform scale-x-0 transition-transform origin-left hover:scale-x-100"></span>
           </Link>
@@ -244,7 +303,7 @@ const Header = () => {
 
         {/* Logo */}
         <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1">
-          <Link href="/" onClick={closeMenu}>
+          <Link href="/" onClick={handleNavigation}>
             <Image
               src="/logotipo.jpg"
               alt="Logo da empresa"
@@ -418,13 +477,34 @@ const Header = () => {
           <div className="fixed top-[80px] left-0 w-full h-[calc(100vh-80px)] bg-[#d2d1cd] z-50 overflow-y-auto">
             <div className="flex flex-col items-center py-4">
               {/* Links do Menu */}
-              <Link href="/" className="text-[#333] font-medium py-3 w-full text-center" onClick={closeMenu}>
+              <Link 
+                href="/" 
+                className="text-[#333] font-medium py-3 w-full text-center" 
+                onClick={() => {
+                  toggleMenu();
+                  handleNavigation();
+                }}
+              >
                 Home
               </Link>
-              <Link href="/men" className="text-[#333] font-medium py-3 w-full text-center" onClick={closeMenu}>
+              <Link 
+                href="/men" 
+                className="text-[#333] font-medium py-3 w-full text-center" 
+                onClick={() => {
+                  toggleMenu();
+                  handleNavigation();
+                }}
+              >
                 Men
               </Link>
-              <Link href="/women" className="text-[#333] font-medium py-3 w-full text-center" onClick={closeMenu}>
+              <Link 
+                href="/women" 
+                className="text-[#333] font-medium py-3 w-full text-center" 
+                onClick={() => {
+                  toggleMenu();
+                  handleNavigation();
+                }}
+              >
                 Women
               </Link>
 

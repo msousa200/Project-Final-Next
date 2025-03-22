@@ -12,8 +12,36 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sortOption, setSortOption] = useState('newest');
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
+  // Verificar se estamos no cliente
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Carregar preferências salvas quando a página é carregada (apenas no cliente)
+  useEffect(() => {
+    if (!isClient) return;
+
+    try {
+      // Carregar as marcas selecionadas do localStorage
+      const savedBrands = localStorage.getItem('selectedBrands');
+      if (savedBrands) {
+        setSelectedBrands(JSON.parse(savedBrands));
+      }
+      
+      // Carregar a opção de ordenação do localStorage
+      const savedSortOption = localStorage.getItem('sortOption');
+      if (savedSortOption) {
+        setSortOption(savedSortOption);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar preferências:', error);
+    }
+  }, [isClient]);
+
+  // Carregar produtos
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -29,6 +57,29 @@ export default function Home() {
     fetchProducts();
   }, []);
 
+  // Salvar as marcas selecionadas no localStorage quando mudarem
+  useEffect(() => {
+    if (!isClient) return;
+    
+    try {
+      localStorage.setItem('selectedBrands', JSON.stringify(selectedBrands));
+    } catch (error) {
+      console.error('Erro ao salvar preferências de marcas:', error);
+    }
+  }, [selectedBrands, isClient]);
+
+  // Salvar a opção de ordenação no localStorage quando mudar
+  useEffect(() => {
+    if (!isClient) return;
+    
+    try {
+      localStorage.setItem('sortOption', sortOption);
+    } catch (error) {
+      console.error('Erro ao salvar preferência de ordenação:', error);
+    }
+  }, [sortOption, isClient]);
+
+  // Função para lidar com a seleção/deseleção de marcas
   const handleBrandChange = (brandId: number) => {
     setSelectedBrands((prev) =>
       prev.includes(brandId)
@@ -37,10 +88,17 @@ export default function Home() {
     );
   };
 
+  // Função para limpar os filtros de marcas
+  const handleClearFilters = () => {
+    setSelectedBrands([]); // Limpa as marcas selecionadas
+  };
+
+  // Função para lidar com o clique em um produto
   const handleProductClick = (slug: string) => {
     router.push(`/produto/${slug}`);
   };
 
+  // Função para ordenar os produtos
   const sortProducts = (products: Product[]) => {
     switch (sortOption) {
       case 'lowest':
@@ -53,12 +111,14 @@ export default function Home() {
     }
   };
 
+  // Filtrar e ordenar os produtos
   const filteredAndSortedProducts = sortProducts(
     selectedBrands.length > 0
       ? products.filter((product) => selectedBrands.includes(product.brandId))
       : products
   );
 
+  // Exibir um spinner enquanto os produtos estão sendo carregados
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -77,9 +137,10 @@ export default function Home() {
             <BrandFilter
               selectedBrands={selectedBrands}
               onBrandChange={handleBrandChange}
+              onClearFilters={handleClearFilters}
             />
           </div>
-
+          
           {/* Grid de Produtos */}
           <div className="w-full md:w-3/4 md:pl-4">
             <div className="flex flex-col md:flex-row justify-between items-center mb-6">
