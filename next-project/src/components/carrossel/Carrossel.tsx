@@ -9,9 +9,9 @@ import 'swiper/css/autoplay';
 
 const Carrossel = () => {
   const images = [
-    "/Rolex.jpg",
-    "/tommyss25-23132-11-x.jpg",
     "/Gant.jpg",
+    "/hugo_boss_banner_1200x1200.jpg",
+    "/tommyss25-23132-11-x.jpg",
   ];
 
   return (

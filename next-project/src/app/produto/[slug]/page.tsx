@@ -134,9 +134,29 @@ export default function ProductPage() {
     );
   }
 
-  const relatedProducts = products
-    .filter((p) => p.categoryId === product.categoryId && p.id !== product.id)
+  // Produtos Relacionados - Lógica Melhorada
+  // Primeiro, tenta encontrar produtos da mesma marca E categoria
+  let relatedProducts = products
+    .filter((p) => 
+      p.categoryId === product.categoryId && 
+      p.brandId === product.brandId && 
+      p.id !== product.id
+    )
     .slice(0, 4);
+
+  // Se não encontrar produtos suficientes da mesma marca e categoria,
+  // complementa com produtos da mesma categoria apenas
+  if (relatedProducts.length < 4) {
+    const additionalProducts = products
+      .filter((p) => 
+        p.categoryId === product.categoryId && 
+        p.brandId !== product.brandId && 
+        p.id !== product.id
+      )
+      .slice(0, 4 - relatedProducts.length);
+    
+    relatedProducts = [...relatedProducts, ...additionalProducts];
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 px-4 sm:px-6 lg:px-8">
