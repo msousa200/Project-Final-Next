@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/data/products';
@@ -7,6 +7,20 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '@/features/cartSlice';
 import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+
+// Adicionar mapeamento de brandId para nome da marca
+const brandNames: Record<number, string> = {
+  1: "BOSS",
+  2: "CALVIN KLEIN",
+  3: "GANT",
+  4: "GUESS",
+  5: "HAMILTON",
+  6: "HUGO",
+  7: "LACOSTE",
+  8: "NIXON",
+  9: "TISSOT",
+  10: "TOMMY HILFIGER"
+};
 
 function slugify(text: string): string {
   return text
@@ -86,11 +100,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onProductClick }) =
                 href={`/produto/${slugify(product.name)}`} 
                 onClick={() => onProductClick(slugify(product.name))}
               >
-                <h3 className="text-lg font-semibold text-gray-800 line-clamp-1 hover:text-black transition-colors">
-                  {product.name}
+                {/* Nome da marca em destaque */}
+                <h3 className="text-lg font-bold text-gray-900 mb-1 uppercase tracking-wide">
+                  {brandNames[product.brandId] || "MARCA"}
                 </h3>
+                
+                {/* Nome do relógio completo com tamanho menor */}
+                <p className="text-xs text-gray-700 mb-2 min-h-[32px] break-words">
+                  {product.name}
+                </p>
               </Link>
-              <p className="text-gray-600 mt-1">{formatPrice(product.price)}</p>
+              
+              {/* Preço mantido no final */}
+              <p className="text-gray-600 mt-2 font-medium">{formatPrice(product.price)}</p>
             </div>
 
             <div className={`absolute bottom-0 left-0 right-0 bg-black/75 px-4 py-3 

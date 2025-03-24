@@ -219,12 +219,31 @@ const Header = () => {
   // Adicionar usePathname para verificar a rota atual
   const pathname = usePathname();
   const isCheckoutPage = pathname === '/checkout';
-  
-  // Crie uma função para lidar com a navegação
+  const isSuccessPage = pathname === '/success' || pathname === '/checkout/success'; // Adicionar esta linha
+
+  // Adicione esta função após handleLogout
   const handleNavigation = () => {
     // Limpa todos os filtros quando o usuário navega pelo header
     clearAllFilters();
   };
+
+  // Renderização condicional para página de sucesso
+  if (isSuccessPage) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-[80px] md:h-[100px] flex items-center justify-center px-4 md:px-10 bg-[#d2d1cd] border-b border-[#e0e0e0] z-[1000] shadow-md">
+        {/* Apenas o logo centralizado */}
+        <Link href="/">
+          <Image
+            src="/logotipo.jpg"
+            alt="Logo da empresa"
+            width={180}
+            height={60}
+            className="max-w-[120px] md:max-w-[180px] h-auto"
+          />
+        </Link>
+      </div>
+    );
+  }
 
   // Renderização condicional baseada na página atual
   if (isCheckoutPage) {

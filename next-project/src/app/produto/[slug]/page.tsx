@@ -10,6 +10,20 @@ import Link from "next/link";
 import { getProducts, Product } from "@/data/products";
 import { toast } from "react-hot-toast";
 
+// Adicionar mapeamento de brandId para nome da marca
+const brandNames: Record<number, string> = {
+  1: "BOSS",
+  2: "CALVIN KLEIN",
+  3: "GANT",
+  4: "GUESS",
+  5: "HAMILTON",
+  6: "HUGO",
+  7: "LACOSTE",
+  8: "NIXON",
+  9: "TISSOT",
+  10: "TOMMY HILFIGER"
+};
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -144,6 +158,12 @@ export default function ProductPage() {
 
           {/* Detalhes */}
           <div className="p-6 lg:p-8 flex flex-col justify-center">
+            {/* Marca do produto - NOVO */}
+            <h3 className="text-xl font-bold text-gray-700 uppercase tracking-wide mb-1">
+              {brandNames[product.brandId] || "MARCA"}
+            </h3>
+            
+            {/* Nome do produto */}
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               {product.name}
             </h1>
