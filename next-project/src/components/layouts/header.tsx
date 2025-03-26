@@ -9,16 +9,14 @@ import { clearUser, setUser } from '@/features/cartSlice';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { getProducts } from '@/data/products'; 
-import { clearAllFilters } from '@/utils/filterUtils'; // Importe a função utilitária
+import { clearAllFilters } from '@/utils/filterUtils'; 
 
 const extractTextFromHTML = (html: string): string => {
-  // No ambiente do navegador
   if (typeof window !== 'undefined') {
     const div = document.createElement('div');
     div.innerHTML = html;
     return div.textContent || div.innerText || '';
   }
-  // Fallback para ambiente de servidor (SSR)
   return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 };
 
@@ -60,13 +58,10 @@ const Header = () => {
           ? extractTextFromHTML(product.description)
           : product.description;
         
-        // Combinar nome e descrição limpa
         const text = `${product.name} ${cleanDescription}`.toLowerCase();
         
-        // Extrair todas as palavras do texto
         const allWords = text.split(/\s+/);
         
-        // Filtrar palavras que começam com a consulta
         allWords
           .filter(word => 
             word.startsWith(query.toLowerCase()) && 
@@ -76,7 +71,6 @@ const Header = () => {
           .forEach(word => uniqueWords.add(word.charAt(0).toUpperCase() + word.slice(1)));
       });
       
-      // Converter para array, ordenar e limitar
       const wordSuggestions = Array.from(uniqueWords)
         .sort()
         .slice(0, 6);
@@ -195,16 +189,13 @@ const Header = () => {
   };
 
   const handleLogout = async () => {
-    // Usar o redirecionamento automático do NextAuth
     await signOut({ 
       redirect: true, 
       callbackUrl: '/' 
     });
     
-    // O dispatch ainda será executado antes do redirecionamento
     dispatch(clearUser());
     
-    // Não precisamos do router.push() porque o NextAuth já vai redirecionar
   };
 
   useEffect(() => {
@@ -220,18 +211,14 @@ const Header = () => {
     };
   }, []);
 
-  // Adicionar usePathname para verificar a rota atual
   const pathname = usePathname();
   const isCheckoutPage = pathname === '/checkout';
-  const isSuccessPage = pathname === '/success' || pathname === '/checkout/success'; // Adicionar esta linha
+  const isSuccessPage = pathname === '/success' || pathname === '/checkout/success'; 
 
-  // Adicione esta função após handleLogout
   const handleNavigation = () => {
-    // Limpa todos os filtros quando o usuário navega pelo header
     clearAllFilters();
   };
 
-  // Renderização condicional para página de sucesso
   if (isSuccessPage) {
     return (
       <div className="fixed top-0 left-0 w-full h-[80px] md:h-[100px] flex items-center justify-center px-4 md:px-10 bg-[#d2d1cd] border-b border-[#e0e0e0] z-[1000] shadow-md">
@@ -249,7 +236,6 @@ const Header = () => {
     );
   }
 
-  // Renderização condicional baseada na página atual
   if (isCheckoutPage) {
     return (
       <div className="fixed top-0 left-0 w-full h-[80px] md:h-[100px] flex items-center justify-between px-4 md:px-10 bg-[#d2d1cd] border-b border-[#e0e0e0] z-[1000] shadow-md">
@@ -284,7 +270,6 @@ const Header = () => {
     );
   }
 
-  // Header normal para as outras páginas
   return (
     <>
       {/* Header Principal */}
@@ -349,7 +334,6 @@ const Header = () => {
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  // Se o campo ficar vazio, esconde as sugestões imediatamente
                   if (!e.target.value.trim()) {
                     setShowSuggestions(false);
                   }

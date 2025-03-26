@@ -8,13 +8,11 @@ import BrandFilter from '@/components/BrandFilter/BrandFilter';
 import { Product, getProducts } from '@/data/products';
 
 const extractTextFromHTML = (html: string): string => {
-  // No ambiente do navegador
   if (typeof window !== 'undefined') {
     const div = document.createElement('div');
     div.innerHTML = html;
     return div.textContent || div.innerText || '';
   }
-  // Fallback para ambiente de servidor (SSR)
   return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 };
 
@@ -29,23 +27,19 @@ export default function PesquisaPage() {
   const router = useRouter();
   const searchQuery = searchParams.get('q') || '';
 
-  // Verificar se estamos no cliente
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Carregar preferências salvas quando a página é carregada
   useEffect(() => {
     if (!isClient) return;
 
     try {
-      // Carregar as marcas selecionadas do localStorage
       const savedBrands = localStorage.getItem('searchSelectedBrands');
       if (savedBrands) {
         setSelectedBrands(JSON.parse(savedBrands));
       }
       
-      // Carregar a opção de ordenação do localStorage
       const savedSortOption = localStorage.getItem('searchSortOption');
       if (savedSortOption) {
         setSortOption(savedSortOption);
@@ -63,7 +57,6 @@ export default function PesquisaPage() {
         const allProducts = await getProducts();
         
         const searchFilteredProducts = allProducts.filter(product => {
-          // Extrair texto limpo da descrição HTML
           const cleanDescription = product.description.includes('<') 
             ? extractTextFromHTML(product.description)
             : product.description;
@@ -90,7 +83,6 @@ export default function PesquisaPage() {
     }
   }, [searchQuery]);
 
-  // Salvar as marcas selecionadas no localStorage quando mudarem
   useEffect(() => {
     if (!isClient) return;
     
@@ -101,7 +93,6 @@ export default function PesquisaPage() {
     }
   }, [selectedBrands, isClient]);
 
-  // Salvar a opção de ordenação no localStorage quando mudar
   useEffect(() => {
     if (!isClient) return;
     

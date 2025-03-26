@@ -8,7 +8,6 @@ import { RootState } from '@/app/store';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 import RequireAuth from '@/components/auth/RequireAuth';
-// Adicione estas importações de ícones
 import { 
   FaCreditCard, 
   FaPaypal, 

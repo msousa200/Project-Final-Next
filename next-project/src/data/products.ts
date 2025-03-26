@@ -22,7 +22,6 @@ function slugify(text: string): string {
 }
 
 function generateSpecsTable(specs: ProductSpecs): string {
-  // Função para filtrar campos indesejados
   const filterUnwantedSpecs = (specsObj: {[key: string]: string}) => {
     const unwantedFields = ["Is preowned", "Online exclusive", "Tipo de Artigo", "Kids", "Edição Especial"];
     const filteredSpecs: {[key: string]: string} = {};
@@ -36,7 +35,6 @@ function generateSpecsTable(specs: ProductSpecs): string {
     return filteredSpecs;
   };
 
-  // Aplicar o filtro aos specs visíveis e ocultos
   const filteredVisibleSpecs = filterUnwantedSpecs(specs.visibleSpecs);
   const filteredHiddenSpecs = filterUnwantedSpecs(specs.hiddenSpecs);
 
@@ -1398,7 +1396,6 @@ export async function getProducts(): Promise<Product[]> {
     }
   };
 
-  // Especificações do produto
   const product58Specs: ProductSpecs = {
     visibleSpecs: {
       "Marca": "Tommy Hilfiger Watches",
@@ -1424,7 +1421,6 @@ export async function getProducts(): Promise<Product[]> {
     }
   };
 
-  // Especificações do produto 59
   const product59Specs: ProductSpecs = {
     visibleSpecs: {
       "Marca": "Tommy Hilfiger Watches",
@@ -1450,7 +1446,6 @@ export async function getProducts(): Promise<Product[]> {
     }
   };
 
-  // Especificações do produto 60
   const product60Specs: ProductSpecs = {
     visibleSpecs: {
       "Marca": "Tommy Hilfiger Watches",
@@ -1475,7 +1470,6 @@ export async function getProducts(): Promise<Product[]> {
     }
   };
 
-  // Especificações do produto 61
   const product61Specs: ProductSpecs = {
     visibleSpecs: {
       "Marca": "Tommy Hilfiger Watches",
@@ -1500,7 +1494,6 @@ export async function getProducts(): Promise<Product[]> {
     }
   };
 
-  // Especificações do produto 62
   const product62Specs: ProductSpecs = {
     visibleSpecs: {
       "Marca": "Tommy Hilfiger Watches",
@@ -1524,7 +1517,6 @@ export async function getProducts(): Promise<Product[]> {
     }
   };
 
-  // Especificações do produto 63
   const product63Specs: ProductSpecs = {
     visibleSpecs: {
       "Marca": "Tommy Hilfiger Watches",
@@ -1835,7 +1827,7 @@ export async function getProducts(): Promise<Product[]> {
       price: 139.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/1/5/1530186.png",
       description: generateSpecsTable(product32Specs),
-      brandId: 6, // Assumindo que HUGO Watches tenha o ID 6 no arquivo brands.ts
+      brandId: 6, 
       categoryId: 1,
     },
     {
@@ -1871,7 +1863,7 @@ export async function getProducts(): Promise<Product[]> {
       price: 99.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/2/0/2011364_Soldier.png",
       description: generateSpecsTable(product36Specs),
-      brandId: 7, // Assumindo que Lacoste Watches tenha o ID 7 no arquivo brands.ts
+      brandId: 7, 
       categoryId: 1,
     },
     {
@@ -1880,7 +1872,7 @@ export async function getProducts(): Promise<Product[]> {
       price: 129.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/2/0/2011372_Soldier.png",
       description: generateSpecsTable(product37Specs),
-      brandId: 7, // Lacoste Watches
+      brandId: 7, 
       categoryId: 1,
     },
     {
@@ -1889,7 +1881,7 @@ export async function getProducts(): Promise<Product[]> {
       price: 139.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/2/0/2011241_C2_A71_C2_A7isth.png",
       description: generateSpecsTable(product38Specs),
-      brandId: 7, // Lacoste Watches
+      brandId: 7, 
       categoryId: 1,
     },
     {
@@ -1898,7 +1890,7 @@ export async function getProducts(): Promise<Product[]> {
       price: 199.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/2/0/2011347.png",
       description: generateSpecsTable(product39Specs),
-      brandId: 7, // Lacoste Watches
+      brandId: 7, 
       categoryId: 1,
     },
     {
@@ -1907,8 +1899,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 139.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/2/0/2011253-lrg-rgb-web.png",
       description: generateSpecsTable(product40Specs),
-      brandId: 7, // Lacoste Watches
-      categoryId: 2, // Feminino
+      brandId: 7, 
+      categoryId: 2,
     },
     {
       id: 41,
@@ -1916,8 +1908,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 169.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/2/0/2001368.png",
       description: generateSpecsTable(product41Specs),
-      brandId: 7, // Lacoste Watches
-      categoryId: 2, // Feminino
+      brandId: 7, 
+      categoryId: 2, 
     },
     {
       id: 42,
@@ -1925,8 +1917,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 179.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/2/0/2001206.png",
       description: generateSpecsTable(product42Specs),
-      brandId: 7, // Lacoste Watches
-      categoryId: 2, // Feminino
+      brandId: 7, 
+      categoryId: 2, 
     },
     {
       id: 43,
@@ -1934,8 +1926,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 275.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/a/3/a356-5084.png",
       description: generateSpecsTable(product43Specs),
-      brandId: 8, // Nixon (nova marca)
-      categoryId: 1, // Masculino
+      brandId: 8, 
+      categoryId: 1, 
     },
     {
       id: 44,
@@ -1943,8 +1935,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 275.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/A/1/A1422-5288-view1.png",
       description: generateSpecsTable(product44Specs),
-      brandId: 8, // Nixon
-      categoryId: 1, // Masculino
+      brandId: 8, 
+      categoryId: 1,
     },
     {
       id: 45,
@@ -1952,8 +1944,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 275.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/a/3/a356-2033.png",
       description: generateSpecsTable(product45Specs),
-      brandId: 8, // Nixon
-      categoryId: 1, // Masculino
+      brandId: 8, 
+      categoryId: 1, 
     },
     {
       id: 46,
@@ -1961,8 +1953,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 275.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/A/1/A1422-5289-view1.png",
       description: generateSpecsTable(product46Specs),
-      brandId: 8, // Nixon
-      categoryId: 1, // Masculino
+      brandId: 8, 
+      categoryId: 1, 
     },
     {
       id: 47,
@@ -1970,8 +1962,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 130.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/a/3/a327-3233.png",
       description: generateSpecsTable(product47Specs),
-      brandId: 8, // Nixon
-      categoryId: 2, // Feminino
+      brandId: 8, 
+      categoryId: 2, 
     },
     {
       id: 48,
@@ -1979,8 +1971,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 150.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/a/1/a1272-502.png",
       description: generateSpecsTable(product48Specs),
-      brandId: 8, // Nixon
-      categoryId: 2, // Feminino
+      brandId: 8, 
+      categoryId: 2, 
     },
     {
       id: 49,
@@ -1988,8 +1980,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 150.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/a/1/a1272-897.png",
       description: generateSpecsTable(product49Specs),
-      brandId: 8, // Nixon
-      categoryId: 2, // Feminino
+      brandId: 8, 
+      categoryId: 2, 
     },
     {
       id: 50,
@@ -1997,8 +1989,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 295.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/T/1/T150_410_11_091_00.png",
       description: generateSpecsTable(product50Specs),
-      brandId: 9, // Tissot (nova marca)
-      categoryId: 1, // Masculino
+      brandId: 9, 
+      categoryId: 1, 
     },
     {
       id: 51,
@@ -2006,8 +1998,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 295.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/t/1/t1294101605300.png",
       description: generateSpecsTable(product51Specs),
-      brandId: 9, // Tissot
-      categoryId: 1, // Masculino
+      brandId: 9,
+      categoryId: 1, 
     },
     {
       id: 52,
@@ -2015,8 +2007,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 325.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/t/1/t1164101104700.png",
       description: generateSpecsTable(product52Specs),
-      brandId: 9, // Tissot
-      categoryId: 1, // Masculino
+      brandId: 9, 
+      categoryId: 1, 
     },
     {
       id: 53,
@@ -2024,8 +2016,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 345.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/t/1/t1294101101300.png",
       description: generateSpecsTable(product53Specs),
-      brandId: 9, // Tissot
-      categoryId: 1, // Masculino
+      brandId: 9, 
+      categoryId: 1, 
     },
     {
       id: 54,
@@ -2033,8 +2025,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 345.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/T/1/T143.210.33.021.00_1_isth.png",
       description: generateSpecsTable(product54Specs),
-      brandId: 9, // Tissot
-      categoryId: 2, // Feminino
+      brandId: 9, 
+      categoryId: 2,
     },
     {
       id: 55,
@@ -2042,8 +2034,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 345.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/T/1/T150_210_21_031_00.png",
       description: generateSpecsTable(product55Specs),
-      brandId: 9, // Tissot
-      categoryId: 2, // Feminino
+      brandId: 9, 
+      categoryId: 2, 
     },
     {
       id: 56,
@@ -2051,8 +2043,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 475.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/t/1/t1019102206100.png",
       description: generateSpecsTable(product56Specs),
-      brandId: 9, // Tissot
-      categoryId: 2, // Feminino
+      brandId: 9, 
+      categoryId: 2, 
     },
     {
       id: 57,
@@ -2060,8 +2052,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 139.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/1/7/1710670_LRG_rgb_Web_Macys.png",
       description: generateSpecsTable(product57Specs),
-      brandId: 10, // Tommy Hilfiger Watches (nova marca)
-      categoryId: 1, // Masculino
+      brandId: 10, 
+      categoryId: 1, 
     },
     {
       id: 58,
@@ -2069,8 +2061,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 169.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/1/7/1710667_LRG_rgb_Web.png",
       description: generateSpecsTable(product58Specs),
-      brandId: 10, // Tommy Hilfiger Watches
-      categoryId: 1, // Masculino
+      brandId: 10, 
+      categoryId: 1, 
     },
     {
       id: 59,
@@ -2078,8 +2070,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 179.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/1/7/1791973.png",
       description: generateSpecsTable(product59Specs),
-      brandId: 10, // Tommy Hilfiger Watches
-      categoryId: 1, // Masculino
+      brandId: 10, 
+      categoryId: 1, 
     },
     {
       id: 60,
@@ -2087,8 +2079,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 199.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/1/7/1710627_LRG_POP.png",
       description: generateSpecsTable(product60Specs),
-      brandId: 10, // Tommy Hilfiger Watches
-      categoryId: 1, // Masculino
+      brandId: 10, 
+      categoryId: 1, 
     },
     {
       id: 61,
@@ -2096,8 +2088,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 139.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/1/7/1782665.png",
       description: generateSpecsTable(product61Specs),
-      brandId: 10, // Tommy Hilfiger Watches
-      categoryId: 2, // Feminino
+      brandId: 10, 
+      categoryId: 2, 
     },
     {
       id: 62,
@@ -2105,8 +2097,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 149.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/1/7/1782711_LRG_POP.png",
       description: generateSpecsTable(product62Specs),
-      brandId: 10, // Tommy Hilfiger Watches
-      categoryId: 2, // Feminino
+      brandId: 10, 
+      categoryId: 2, 
     },
     {
       id: 63,
@@ -2114,8 +2106,8 @@ export async function getProducts(): Promise<Product[]> {
       price: 149.0,
       image: "https://de9mvi9pqgvkh.cloudfront.net/media/catalog/product/cache/dab390b481324d68ec6ea6d58c64f355/1/7/1782772_LRG_POP.png",
       description: generateSpecsTable(product63Specs),
-      brandId: 10, // Tommy Hilfiger Watches
-      categoryId: 2, // Feminino
+      brandId: 10, 
+      categoryId: 2, 
     }
   ];
 

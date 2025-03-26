@@ -9,7 +9,6 @@ import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
-// Adicionar mapeamento de brandId para nome da marca
 const brandNames: Record<number, string> = {
   1: "BOSS",
   2: "CALVIN KLEIN",
@@ -85,7 +84,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onProductClick }) =
             onMouseEnter={() => setHoveredProduct(product.id)}
             onMouseLeave={() => setHoveredProduct(null)}
             onClick={(e) => {
-              // Em dispositivos móveis, clicar no card inteiro leva à página do produto
               const isMobile = window.innerWidth < 768;
               if (isMobile) {
                 e.preventDefault();
@@ -134,7 +132,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onProductClick }) =
             >
               <button
                 onClick={(e) => {
-                  e.stopPropagation(); // Evita que o clique no botão propague para o card
+                  e.stopPropagation();  
                   handleAddToCart(product);
                 }}
                 disabled={loadingProductId === product.id}

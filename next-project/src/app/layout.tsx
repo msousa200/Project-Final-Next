@@ -27,9 +27,9 @@ export const metadata: Metadata = {
     description: 'Descubra nossa coleção exclusiva de relógios de luxo das melhores marcas.',
     images: [
       {
-        url: '/logotipo.jpg', // Substituído por logotipo
-        width: 1200, // Ajuste para as dimensões reais do logotipo
-        height: 630,  // Ajuste para as dimensões reais do logotipo
+        url: '/logotipo.jpg', 
+        width: 1200,
+        height: 630, 
         alt: 'Perfect Hour',
       }
     ],
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Perfect Hour | Relógios de Luxo',
     description: 'Descubra nossa coleção exclusiva de relógios de luxo das melhores marcas.',
-    images: ['/logotipo.jpg'], // Substituído por logotipo
+    images: ['/logotipo.jpg'], 
   },
   icons: {
     icon: [

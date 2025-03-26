@@ -15,23 +15,19 @@ export default function Home() {
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
-  // Verificar se estamos no cliente
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Carregar preferências salvas quando a página é carregada (apenas no cliente)
   useEffect(() => {
     if (!isClient) return;
 
     try {
-      // Carregar as marcas selecionadas do localStorage
       const savedBrands = localStorage.getItem('selectedBrands');
       if (savedBrands) {
         setSelectedBrands(JSON.parse(savedBrands));
       }
       
-      // Carregar a opção de ordenação do localStorage
       const savedSortOption = localStorage.getItem('sortOption');
       if (savedSortOption) {
         setSortOption(savedSortOption);
@@ -41,7 +37,6 @@ export default function Home() {
     }
   }, [isClient]);
 
-  // Carregar produtos
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -57,7 +52,6 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  // Salvar as marcas selecionadas no localStorage quando mudarem
   useEffect(() => {
     if (!isClient) return;
     
@@ -68,7 +62,6 @@ export default function Home() {
     }
   }, [selectedBrands, isClient]);
 
-  // Salvar a opção de ordenação no localStorage quando mudar
   useEffect(() => {
     if (!isClient) return;
     
@@ -79,7 +72,6 @@ export default function Home() {
     }
   }, [sortOption, isClient]);
 
-  // Função para lidar com a seleção/deseleção de marcas
   const handleBrandChange = (brandId: number) => {
     setSelectedBrands((prev) =>
       prev.includes(brandId)
@@ -88,17 +80,14 @@ export default function Home() {
     );
   };
 
-  // Função para limpar os filtros de marcas
   const handleClearFilters = () => {
-    setSelectedBrands([]); // Limpa as marcas selecionadas
+    setSelectedBrands([]);
   };
 
-  // Função para lidar com o clique em um produto
   const handleProductClick = (slug: string) => {
     router.push(`/produto/${slug}`);
   };
 
-  // Função para ordenar os produtos
   const sortProducts = (products: Product[]) => {
     switch (sortOption) {
       case 'lowest':
@@ -111,14 +100,11 @@ export default function Home() {
     }
   };
 
-  // Substitua a lógica atual por esta versão otimizada
   const filteredAndSortedProducts = useMemo(() => {
-    // Primeiro filtre os produtos
     const filtered = selectedBrands.length > 0
       ? products.filter((product) => selectedBrands.includes(product.brandId))
       : products;
       
-    // Depois ordene os produtos filtrados
     switch (sortOption) {
       case 'lowest':
         return [...filtered].sort((a, b) => a.price - b.price);
@@ -130,7 +116,6 @@ export default function Home() {
     }
   }, [products, selectedBrands, sortOption]);
 
-  // Exibir um spinner enquanto os produtos estão sendo carregados
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">

@@ -7,9 +7,7 @@ import BrandFilter from '@/components/BrandFilter/BrandFilter';
 import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 
-// Helper para localStorage seguro
 const getLocalStorage = (key: string, defaultValue: any) => {
-  // Verifique se está no navegador
   if (typeof window === 'undefined') {
     return defaultValue;
   }
@@ -23,7 +21,6 @@ const getLocalStorage = (key: string, defaultValue: any) => {
   }
 };
 
-// Helper para salvar no localStorage com segurança
 const setLocalStorage = (key: string, value: any) => {
   if (typeof window === 'undefined') {
     return;
@@ -45,12 +42,10 @@ export default function MenPage() {
   
   const router = useRouter();
 
-  // Marque quando o componente estiver montado no cliente
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Carregue os dados do localStorage apenas após a montagem
   useEffect(() => {
     if (isMounted) {
       const savedBrands = getLocalStorage('menSelectedBrands', []);
@@ -61,7 +56,6 @@ export default function MenPage() {
     }
   }, [isMounted]);
 
-  // Buscar produtos
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -79,7 +73,6 @@ export default function MenPage() {
     fetchProducts();
   }, []);
 
-  // Salvar no localStorage quando os filtros mudarem
   useEffect(() => {
     if (isMounted) {
       setLocalStorage('menSelectedBrands', selectedBrands);

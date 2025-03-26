@@ -2,12 +2,10 @@ import { MetadataRoute } from 'next';
 import { getProducts } from '@/data/products';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://perfecthour.com'; // URL atualizada
+  const baseUrl = 'https://perfecthour.com'; 
   
-  // Buscar todos os produtos para o sitemap
   const products = await getProducts();
   
-  // URLs de produtos
   const productUrls = products.map(product => ({
     url: `${baseUrl}/produto/${product.slug}`,
     lastModified: new Date(),
@@ -15,7 +13,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
   
-  // URLs fixas
   return [
     {
       url: baseUrl,

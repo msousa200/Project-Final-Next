@@ -15,7 +15,6 @@ const Carrossel = () => {
   ];
 
   return (
-    // Container ajustado para tela cheia em móvel
     <div className="w-screen sm:w-full -mx-4 sm:mx-0 mt-0 sm:mt-[100px] mb-[50px] flex justify-center items-center relative overflow-hidden">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
@@ -30,7 +29,6 @@ const Carrossel = () => {
           disableOnInteraction: false,
         }}
         loop={true}
-        // Sem arredondamento em móvel, largura total
         className="w-full max-w-none sm:max-w-[1171px] h-[200px] sm:h-[300px] md:h-[350px] lg:h-[441px] rounded-none sm:rounded-lg overflow-hidden shadow-lg"
       >
         <div className="swiper-button-prev absolute top-1/2 left-5 transform -translate-y-1/2 w-10 h-10 flex items-center justify-center cursor-pointer z-10 opacity-0 hover:opacity-100 transition-opacity duration-300 text-white"></div>

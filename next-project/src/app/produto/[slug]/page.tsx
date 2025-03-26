@@ -10,7 +10,6 @@ import Link from "next/link";
 import { getProducts, Product } from "@/data/products";
 import { toast } from "react-hot-toast";
 
-// Adicionar mapeamento de brandId para nome da marca
 const brandNames: Record<number, string> = {
   1: "BOSS",
   2: "CALVIN KLEIN",
@@ -134,8 +133,6 @@ export default function ProductPage() {
     );
   }
 
-  // Produtos Relacionados - Lógica Melhorada
-  // Primeiro, tenta encontrar produtos da mesma marca E categoria
   let relatedProducts = products
     .filter((p) => 
       p.categoryId === product.categoryId && 
@@ -144,8 +141,6 @@ export default function ProductPage() {
     )
     .slice(0, 4);
 
-  // Se não encontrar produtos suficientes da mesma marca e categoria,
-  // complementa com produtos da mesma categoria apenas
   if (relatedProducts.length < 4) {
     const additionalProducts = products
       .filter((p) => 
