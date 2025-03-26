@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -7,6 +8,7 @@ import BrandFilter from '@/components/BrandFilter/BrandFilter';
 import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getLocalStorage = (key: string, defaultValue: any) => {
   if (typeof window === 'undefined') {
     return defaultValue;

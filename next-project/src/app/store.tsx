@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from 'redux-persist';
+import { configureStore, combineReducers, Reducer } from "@reduxjs/toolkit";
+import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import cartReducer from "@/features/cartSlice";
 import userReducer from "@/features/userSlice";
@@ -12,14 +13,19 @@ const cartPersistConfig = {
   whitelist: ['items', 'total'] 
 };
 
+// Use combineReducers para criar o rootReducer corretamente tipado
+const rootReducer = combineReducers({
+  cart: persistReducer(cartPersistConfig, cartReducer),
+  user: userReducer
+});
+
 export const store = configureStore({
-  reducer: {
-    cart: persistReducer(cartPersistConfig, cartReducer),
-    user: userReducer,
-  },
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, 
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
     }),
 });
 

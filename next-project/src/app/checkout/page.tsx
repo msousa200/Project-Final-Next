@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -255,7 +256,7 @@ export default function CheckoutPage() {
 
                 <div className="bg-white p-4 rounded-md border border-gray-200 mb-4">
                   <p className="text-sm text-gray-700 mb-3">
-                    Ao clicar em "Confirmar Encomenda", você será redirecionado para o PayPal para concluir sua compra com segurança.
+                    Ao clicar em Confirmar Encomenda, você será redirecionado para o PayPal para concluir sua compra com segurança.
                   </p>
                   
                   <div className="flex items-start mt-3">

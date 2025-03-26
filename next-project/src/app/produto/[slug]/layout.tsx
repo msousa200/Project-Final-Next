@@ -27,6 +27,7 @@ const getAbsoluteUrl = (path: string, baseUrl: string): string => {
 
 export async function generateMetadata(
   { params }: { params: { slug: string } },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {

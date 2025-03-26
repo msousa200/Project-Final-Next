@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import bcrypt from "bcryptjs";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+
+export const dynamic = 'force-dynamic';
 
 export async function PUT(req: Request) {
   try {
