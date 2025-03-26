@@ -2,13 +2,25 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['de9mvi9pqgvkh.cloudfront.net'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'de9mvi9pqgvkh.cloudfront.net',
+        pathname: '**',
+      },
+    ],
   },
-  // Configurações atualizadas para Next.js 14:
   output: 'standalone',
-  swcMinify: true,
   compiler: {
-    styledComponents: true, // Remova se não usar
+    styledComponents: true,
+    // removeConsole: process.env.NODE_ENV === 'production',
+  },
+  experimental: {
+    optimizePackageImports: [
+      '@tanstack/react-query',
+      '@tanstack/react-query-devtools',
+      'next-auth'
+    ],
   }
 };
 

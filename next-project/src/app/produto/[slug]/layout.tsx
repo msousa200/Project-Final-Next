@@ -14,25 +14,14 @@ const brandNames: Record<number, string> = {
   10: "TOMMY HILFIGER"
 };
 
-const cleanHtml = (html: string): string => {
-  return html
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-};
-
-const getAbsoluteUrl = (path: string, baseUrl: string): string => {
-  return path.startsWith('http') ? path : `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
-};
-
 export async function generateMetadata(
   { params }: { params: { slug: string } },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const previousMetadata = await parent;
+
   try {
     const products = await getProducts();
-    
     const product = products.find(p => p.slug === params.slug);
     
     if (!product) {
@@ -49,51 +38,49 @@ export async function generateMetadata(
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://perfecthour.com';
     const productUrl = `${baseUrl}/produto/${product.slug}`;
     const brandName = brandNames[product.brandId] || "Marca Premium";
+    const cleanDescription = product.description
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .substring(0, 160);
     
-    const plainDescription = cleanHtml(product.description).substring(0, 160);
-    
-    const imageUrl = getAbsoluteUrl(product.image, baseUrl);
-    
-    const metadata: Metadata = {
+    const imageUrl = product.image.startsWith('http') 
+      ? product.image 
+      : `${baseUrl}${product.image.startsWith('/') ? '' : '/'}${product.image}`;
+
+    // Configuração correta para Twitter Card
+    const twitterCard = {
+      card: 'summary_large_image',
       title: `${product.name} | ${brandName}`,
-      description: plainDescription,
-      keywords: [
-        brandName, 
-        product.name, 
-        'relógios de luxo', 
-        product.categoryId === 1 ? 'relógios masculinos' : 'relógios femininos',
-        'comprar relógio',
-        'relógio premium'
-      ],
+      description: cleanDescription,
+      images: {
+        url: imageUrl,
+        alt: `Relógio ${product.name} da marca ${brandName}`,
+      },
+      site: '@PerfectHour', // Adicione seu @handle do Twitter
+      creator: '@PerfectHour', // Adicione seu @handle do Twitter
+    };
+
+    return {
+      title: `${product.name} | ${brandName}`,
+      description: cleanDescription,
       alternates: {
         canonical: productUrl,
       },
       openGraph: {
-        type: 'website',
+        ...previousMetadata.openGraph,
+        title: `${product.name} | ${brandName}`,
+        description: cleanDescription,
         url: productUrl,
-        title: `${product.name} | ${brandName}`,
-        description: plainDescription,
-        siteName: 'Perfect Hour',
-        locale: 'pt_PT',
-        images: imageUrl ? [
-          {
-            url: imageUrl,
-            width: 800,
-            height: 600,
-            alt: `Relógio ${product.name} da marca ${brandName}`,
-            type: 'image/jpeg',
-          }
-        ] : undefined,
+        images: [{
+          url: imageUrl,
+          width: 800,
+          height: 600,
+          alt: `Relógio ${product.name} da marca ${brandName}`,
+        }],
       },
-      twitter: {
-        card: 'summary_large_image',
-        title: `${product.name} | ${brandName}`,
-        description: plainDescription,
-        images: imageUrl ? [imageUrl] : undefined,
-      },
+      twitter: twitterCard, // Usando a configuração correta
     };
-
-    return metadata;
 
   } catch (error) {
     console.error('Error generating metadata:', error);
