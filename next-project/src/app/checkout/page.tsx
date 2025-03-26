@@ -1,13 +1,19 @@
-"use client";
+'use client';
 
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import { FaCreditCard, FaPaypal, FaCheckCircle, FaLock } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearCart } from '@/features/cartSlice';
 import { RootState } from '@/app/store';
+import { toast } from 'react-hot-toast';
+import Link from 'next/link';
 import RequireAuth from '@/components/auth/RequireAuth';
+// Adicione estas importações de ícones
+import { 
+  FaCreditCard, 
+  FaPaypal, 
+  FaLock 
+} from 'react-icons/fa';
 
 export default function CheckoutPage() {
   const [step, setStep] = useState<'shipping' | 'payment'>('shipping');

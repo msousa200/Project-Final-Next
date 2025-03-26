@@ -1,7 +1,59 @@
+import type { Metadata } from 'next';
+import { Providers } from '@/components/Providers';
 import Header from '../components/layouts/header';
 import Footer from '../components/layouts/footer';
-import Providers from '@/components/Providers';
 import './globals.css';
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Perfect Hour | Relógios de Luxo',
+    template: '%s | Perfect Hour'
+  },
+  description: 'Descubra nossa coleção exclusiva de relógios de luxo das melhores marcas...',
+  keywords: ['relógios de luxo', 'watches', 'Boss', 'Calvin Klein', 'Gant', 'relógios masculinos', 'relógios femininos'],
+  authors: [{ name: 'Perfect Hour' }],
+  creator: 'Perfect Hour',
+  publisher: 'Perfect Hour',
+  formatDetection: {
+    email: false,
+    telephone: false,
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://perfecthour.com'),
+  openGraph: {
+    type: 'website',
+    locale: 'pt_PT',
+    siteName: 'Perfect Hour',
+    title: 'Perfect Hour | Relógios de Luxo',
+    description: 'Descubra nossa coleção exclusiva de relógios de luxo das melhores marcas.',
+    images: [
+      {
+        url: '/logotipo.jpg', // Substituído por logotipo
+        width: 1200, // Ajuste para as dimensões reais do logotipo
+        height: 630,  // Ajuste para as dimensões reais do logotipo
+        alt: 'Perfect Hour',
+      }
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Perfect Hour | Relógios de Luxo',
+    description: 'Descubra nossa coleção exclusiva de relógios de luxo das melhores marcas.',
+    images: ['/logotipo.jpg'], // Substituído por logotipo
+  },
+  icons: {
+    icon: [
+      { url: '/logotipo.jpg', type: 'image/jpeg' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    shortcut: '/logotipo.jpg',
+    apple: [
+      { url: '/logotipo.jpg', sizes: '180x180' }
+    ],
+  },
+  verification: {
+    google: process.env.GOOGLE_VERIFICATION_ID || '',
+  }
+};
 
 export default function RootLayout({
   children,
@@ -9,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="pt">
       <body className="flex flex-col min-h-screen">
         <Providers>
           <Header />

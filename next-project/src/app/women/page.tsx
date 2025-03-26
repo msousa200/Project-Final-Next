@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Product, getProducts } from '@/data/products';
 import ProductGrid from '@/components/ProductGrid/ProductGrid';
@@ -91,22 +91,26 @@ export default function WomenPage() {
     }
   }, [sortOption, isMounted]);
 
-  const handleBrandChange = (brandId: number) => {
+  const handleBrandChange = useCallback((brandId: number) => {
     setSelectedBrands((prev) =>
       prev.includes(brandId)
         ? prev.filter((id) => id !== brandId)
         : [...prev, brandId]
     );
-  };
+  }, []);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setSelectedBrands([]);
     setSortOption('newest');
-  };
+  }, []);
 
-  const handleProductClick = (slug: string) => {
+  const handleProductClick = useCallback((slug: string) => {
     router.push(`/produto/${slug}`);
-  };
+  }, [router]);
+
+  const handleSortChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOption(e.target.value);
+  }, []);
 
   const sortProducts = (products: Product[]) => {
     switch (sortOption) {
@@ -161,7 +165,7 @@ export default function WomenPage() {
                     focus:outline-none focus:ring-2 focus:ring-black 
                     focus:border-transparent transition-all shadow-sm"
                   value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
+                  onChange={handleSortChange}
                 >
                   <option value="newest">Novidades</option>
                   <option value="lowest">Preço mais baixo</option>

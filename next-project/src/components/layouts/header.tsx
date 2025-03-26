@@ -53,12 +53,9 @@ const Header = () => {
     try {
       const products = await getProducts();
       
-      // Conjunto para armazenar palavras únicas
       const uniqueWords = new Set<string>();
       
-      // Processar cada produto
       products.forEach(product => {
-        // Extrair texto limpo da descrição HTML
         const cleanDescription = product.description.includes('<') 
           ? extractTextFromHTML(product.description)
           : product.description;
@@ -198,9 +195,16 @@ const Header = () => {
   };
 
   const handleLogout = async () => {
-    await signOut({ redirect: false }); 
-    dispatch(clearUser()); 
-    router.push('/'); 
+    // Usar o redirecionamento automático do NextAuth
+    await signOut({ 
+      redirect: true, 
+      callbackUrl: '/' 
+    });
+    
+    // O dispatch ainda será executado antes do redirecionamento
+    dispatch(clearUser());
+    
+    // Não precisamos do router.push() porque o NextAuth já vai redirecionar
   };
 
   useEffect(() => {
@@ -470,15 +474,68 @@ const Header = () => {
         </div>
 
         {/* Ícones (Mobile) */}
-        <div className="md:hidden flex gap-4 items-center">
-          <Link
-            href={isAuthenticated ? "/profile" : "/login"}
-            className="text-[#333] text-2xl transition-colors hover:text-black p-2"
-          >
-            <FaUser aria-label="Perfil" />
-          </Link>
-          <Link href="/carrinho" className="text-[#333] text-2xl transition-colors hover:text-black">
+        <div className="md:hidden flex gap-4 items-center relative">
+          <div className="relative">
+            <button
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className="text-[#333] text-2xl transition-colors hover:text-black p-2"
+            >
+              <FaUser aria-label="Perfil" />
+            </button>
+            
+            {/* Dropdown do Perfil - Versão Mobile */}
+            {isProfileOpen && (
+              <div className="absolute top-12 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[1001]">
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-4 text-gray-700 hover:bg-gray-100 border-b"
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        console.log("Navegando para perfil");
+                      }}
+                    >
+                      <span className="flex items-center">
+                        <FaUser className="inline-block mr-2" />
+                        A Minha Conta
+                      </span>
+                    </Link>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleLogout();
+                        setIsProfileOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-4 text-gray-700 hover:bg-gray-100 flex items-center"
+                    >
+                      <FaSignOutAlt className="inline-block mr-2" />
+                      <span>Terminar Sessão</span>
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="block px-4 py-4 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsProfileOpen(false)}
+                  >
+                    <span className="flex items-center">
+                      <FaUser className="inline-block mr-2" />
+                      Entrar
+                    </span>
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
+          
+          <Link href="/carrinho" className="text-[#333] text-2xl transition-colors hover:text-black p-2 relative">
             <FaShoppingCart />
+            {cartItemsCount > 0 && (
+              <div className="absolute -top-3 -right-2 bg-black text-white text-xs min-w-[20px] h-5 rounded-full flex items-center justify-center px-1">
+                {cartItemsCount}
+              </div>
+            )}
           </Link>
         </div>
       </div>

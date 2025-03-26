@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FaSpinner } from 'react-icons/fa';
 import ProductGrid from '@/components/ProductGrid/ProductGrid';
 import BrandFilter from '@/components/BrandFilter/BrandFilter';

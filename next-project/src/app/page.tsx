@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Carrossel from '@/components/carrossel/Carrossel';
 import ProductGrid from '@/components/ProductGrid/ProductGrid';
@@ -111,12 +111,24 @@ export default function Home() {
     }
   };
 
-  // Filtrar e ordenar os produtos
-  const filteredAndSortedProducts = sortProducts(
-    selectedBrands.length > 0
+  // Substitua a lógica atual por esta versão otimizada
+  const filteredAndSortedProducts = useMemo(() => {
+    // Primeiro filtre os produtos
+    const filtered = selectedBrands.length > 0
       ? products.filter((product) => selectedBrands.includes(product.brandId))
-      : products
-  );
+      : products;
+      
+    // Depois ordene os produtos filtrados
+    switch (sortOption) {
+      case 'lowest':
+        return [...filtered].sort((a, b) => a.price - b.price);
+      case 'highest':
+        return [...filtered].sort((a, b) => b.price - a.price);
+      case 'newest':
+      default:
+        return filtered;
+    }
+  }, [products, selectedBrands, sortOption]);
 
   // Exibir um spinner enquanto os produtos estão sendo carregados
   if (isLoading) {
@@ -144,7 +156,7 @@ export default function Home() {
           {/* Grid de Produtos */}
           <div className="w-full md:w-3/4 md:pl-4">
             <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-              <h2 className="text-xl md:text-2xl font-bold text-center w-full">
+              <h2 className="text-2xl md:text-3xl font-bold text-center w-full">
                 Ver todos os produtos
               </h2>
               <div className="mt-4 md:mt-0">

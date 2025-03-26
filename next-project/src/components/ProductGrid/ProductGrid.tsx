@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '@/features/cartSlice';
 import { FaSpinner } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 // Adicionar mapeamento de brandId para nome da marca
 const brandNames: Record<number, string> = {
@@ -73,12 +74,24 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onProductClick }) =
   return (
     <div className="w-full max-w-[1200px] mx-auto py-8 px-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <div
+        {products.map((product, index) => (
+          <motion.div
             key={product.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-lg mx-auto w-full max-w-[250px] relative group"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
+            whileHover={{ y: -8, transition: { duration: 0.2 } }}
+            className="bg-white rounded-lg shadow-md overflow-hidden mx-auto w-full max-w-[250px] relative group cursor-pointer"
             onMouseEnter={() => setHoveredProduct(product.id)}
             onMouseLeave={() => setHoveredProduct(null)}
+            onClick={(e) => {
+              // Em dispositivos móveis, clicar no card inteiro leva à página do produto
+              const isMobile = window.innerWidth < 768;
+              if (isMobile) {
+                e.preventDefault();
+                onProductClick(slugify(product.name));
+              }
+            }}
           >
             <Link
               href={`/produto/${slugify(product.name)}`} 
@@ -116,11 +129,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onProductClick }) =
             </div>
 
             <div className={`absolute bottom-0 left-0 right-0 bg-black/75 px-4 py-3 
-              flex justify-center items-center opacity-0 transition-all duration-300 
+              hidden md:flex justify-center items-center opacity-0 transition-all duration-300 
               group-hover:opacity-100 translate-y-full group-hover:translate-y-0`}
             >
               <button
-                onClick={() => handleAddToCart(product)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Evita que o clique no botão propague para o card
+                  handleAddToCart(product);
+                }}
                 disabled={loadingProductId === product.id}
                 className="w-full bg-[#2c2c2c] text-white px-6 py-2 rounded-md text-sm uppercase tracking-wider 
                   hover:bg-black hover:-translate-y-0.5 hover:shadow-md transition-all 
@@ -137,7 +153,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, onProductClick }) =
                 )}
               </button>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

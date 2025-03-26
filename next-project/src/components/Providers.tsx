@@ -5,16 +5,31 @@ import { store, persistor } from '@/app/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+// Criando uma instância do QueryClient
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minuto
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          {children}
-          <Toaster position="top-center" />
-        </PersistGate>
-      </Provider>
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            {children}
+            <Toaster position="top-center" />
+          </PersistGate>
+        </Provider>
+      </SessionProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }

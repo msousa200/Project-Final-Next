@@ -22,6 +22,24 @@ function slugify(text: string): string {
 }
 
 function generateSpecsTable(specs: ProductSpecs): string {
+  // Função para filtrar campos indesejados
+  const filterUnwantedSpecs = (specsObj: {[key: string]: string}) => {
+    const unwantedFields = ["Is preowned", "Online exclusive", "Tipo de Artigo", "Kids", "Edição Especial"];
+    const filteredSpecs: {[key: string]: string} = {};
+    
+    Object.entries(specsObj).forEach(([key, value]) => {
+      if (!unwantedFields.includes(key)) {
+        filteredSpecs[key] = value;
+      }
+    });
+    
+    return filteredSpecs;
+  };
+
+  // Aplicar o filtro aos specs visíveis e ocultos
+  const filteredVisibleSpecs = filterUnwantedSpecs(specs.visibleSpecs);
+  const filteredHiddenSpecs = filterUnwantedSpecs(specs.hiddenSpecs);
+
   return `
     <div class="space-y-4">
       <h3 class="text-lg font-semibold text-gray-800 mb-2">Especificações do Produto</h3>
@@ -31,7 +49,7 @@ function generateSpecsTable(specs: ProductSpecs): string {
         <div class="overflow-hidden border border-gray-200 rounded-lg mb-2">
           <table class="w-full divide-y divide-gray-200 text-xs">
             <tbody class="divide-y divide-gray-200">
-              ${Object.entries(specs.visibleSpecs).map(([key, value]) => `
+              ${Object.entries(filteredVisibleSpecs).map(([key, value]) => `
                 <tr class="bg-white hover:bg-gray-50">
                   <td class="px-3 py-2 font-medium text-gray-700 w-2/5">${key}</td>
                   <td class="px-3 py-2 text-gray-600">${value}</td>
@@ -45,7 +63,7 @@ function generateSpecsTable(specs: ProductSpecs): string {
         <div id="specs-extended" class="hidden overflow-hidden border border-gray-200 rounded-lg mt-2">
           <table class="w-full divide-y divide-gray-200 text-xs">
             <tbody class="divide-y divide-gray-200">
-              ${Object.entries(specs.hiddenSpecs).map(([key, value]) => `
+              ${Object.entries(filteredHiddenSpecs).map(([key, value]) => `
                 <tr class="bg-white hover:bg-gray-50">
                   <td class="px-3 py-2 font-medium text-gray-700 w-2/5">${key}</td>
                   <td class="px-3 py-2 text-gray-600">${value}</td>
