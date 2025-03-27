@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { getProducts } from "@/data/products";
 import type { Metadata, ResolvingMetadata } from 'next';
 
@@ -19,10 +20,13 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const previousMetadata = await parent;
+  // Importante: await no params inteiro antes de acessar
+  const resolvedParams = await params;
 
   try {
     const products = await getProducts();
-    const product = products.find(p => p.slug === params.slug);
+    const slug = resolvedParams.slug; // Agora usando o params resolvido
+    const product = products.find(p => p.slug === slug);
     
     if (!product) {
       return {
@@ -36,9 +40,10 @@ export async function generateMetadata(
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://perfecthour.com';
-    const productUrl = `${baseUrl}/produto/${product.slug}`;
+    const productUrl = `${baseUrl}/produto/${slug}`;
     const brandName = brandNames[product.brandId] || "Marca Premium";
-    const cleanDescription = product.description
+    
+    const description = product.description
       .replace(/<[^>]*>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
@@ -48,40 +53,31 @@ export async function generateMetadata(
       ? product.image 
       : `${baseUrl}${product.image.startsWith('/') ? '' : '/'}${product.image}`;
 
-    // Configuração correta para Twitter Card
-    const twitterCard = {
-      card: 'summary_large_image',
-      title: `${product.name} | ${brandName}`,
-      description: cleanDescription,
-      images: {
-        url: imageUrl,
-        alt: `Relógio ${product.name} da marca ${brandName}`,
-      },
-      site: '@PerfectHour', // Adicione seu @handle do Twitter
-      creator: '@PerfectHour', // Adicione seu @handle do Twitter
-    };
-
     return {
       title: `${product.name} | ${brandName}`,
-      description: cleanDescription,
+      description,
       alternates: {
         canonical: productUrl,
       },
       openGraph: {
         ...previousMetadata.openGraph,
         title: `${product.name} | ${brandName}`,
-        description: cleanDescription,
+        description,
         url: productUrl,
         images: [{
           url: imageUrl,
-          width: 800,
-          height: 600,
+          width: 1200,
+          height: 630,
           alt: `Relógio ${product.name} da marca ${brandName}`,
         }],
       },
-      twitter: twitterCard, // Usando a configuração correta
+      twitter: {
+        card: 'summary_large_image',
+        title: `${product.name} | ${brandName}`,
+        description,
+        images: [imageUrl],
+      },
     };
-
   } catch (error) {
     console.error('Error generating metadata:', error);
     return {

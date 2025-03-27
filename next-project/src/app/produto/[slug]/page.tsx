@@ -23,17 +23,12 @@ const brandNames: Record<number, string> = {
   10: "TOMMY HILFIGER"
 };
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, "-") 
-    .replace(/[^\w-]+/g, ""); 
-}
-
 export default function ProductPage() {
   const params = useParams();
   const router = useRouter();
   const dispatch = useDispatch();
+  
+  const slugParam = params?.slug as string;
 
   const [isLoading, setIsLoading] = useState(true);
   const [product, setProduct] = useState<Product | null>(null);
@@ -44,17 +39,15 @@ export default function ProductPage() {
     const fetchProducts = async () => {
       try {
         const fetchedProducts = await getProducts();
-        console.log("Produtos carregados:", fetchedProducts); 
         setProducts(fetchedProducts);
 
-        const slug = params?.slug as string;
-        if (!slug) {
+        if (!slugParam) {
           toast.error("URL inválida");
           router.push("/");
           return;
         }
 
-        const foundProduct = fetchedProducts.find((p) => p.slug === slug);
+        const foundProduct = fetchedProducts.find((p) => p.slug === slugParam);
 
         if (!foundProduct) {
           toast.error("Produto não encontrado");
@@ -72,7 +65,7 @@ export default function ProductPage() {
     };
 
     fetchProducts();
-  }, [params?.slug, router]);
+  }, [slugParam, router]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-PT", {
@@ -133,32 +126,23 @@ export default function ProductPage() {
     );
   }
 
-  let relatedProducts = products
-    .filter((p) => 
-      p.categoryId === product.categoryId && 
-      p.brandId === product.brandId && 
-      p.id !== product.id
-    )
+  const relatedProducts = products
+    .filter((p) => p.id !== product.id)
+    .sort((a, b) => {
+      if (a.brandId === product.brandId && a.categoryId === product.categoryId) return -1;
+      if (b.brandId === product.brandId && b.categoryId === product.categoryId) return 1;
+      if (a.categoryId === product.categoryId) return -1;
+      if (b.categoryId === product.categoryId) return 1;
+      if (a.brandId === product.brandId) return -1;
+      if (b.brandId === product.brandId) return 1;
+      return 0;
+    })
     .slice(0, 4);
-
-  if (relatedProducts.length < 4) {
-    const additionalProducts = products
-      .filter((p) => 
-        p.categoryId === product.categoryId && 
-        p.brandId !== product.brandId && 
-        p.id !== product.id
-      )
-      .slice(0, 4 - relatedProducts.length);
-    
-    relatedProducts = [...relatedProducts, ...additionalProducts];
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Produto */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-lg shadow-lg overflow-hidden">
-          {/* Imagem */}
           <div className="relative lg:order-1">
             <div className="w-full h-96 lg:h-[500px] overflow-hidden relative">
               <Image
@@ -167,18 +151,16 @@ export default function ProductPage() {
                 fill
                 className="object-cover transform transition-transform duration-500 hover:scale-105"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
               />
             </div>
           </div>
 
-          {/* Detalhes */}
           <div className="p-6 lg:p-8 flex flex-col justify-center">
-            {/* Marca do produto - NOVO */}
             <h3 className="text-xl font-bold text-gray-700 uppercase tracking-wide mb-1">
               {brandNames[product.brandId] || "MARCA"}
             </h3>
             
-            {/* Nome do produto */}
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               {product.name}
             </h1>
@@ -186,7 +168,6 @@ export default function ProductPage() {
               {formatPrice(product.price)}
             </p>
 
-            {/* Botão adicionar ao carrinho */}
             <button
               onClick={handleAddToCart}
               disabled={addingToCart}
@@ -202,7 +183,6 @@ export default function ProductPage() {
               )}
             </button>
 
-            {/* Disponibilidade */}
             <div className="mt-6 space-y-4">
               <div className="flex items-center">
                 <span className="text-gray-600 mr-2">Disponibilidade:</span>
@@ -212,15 +192,14 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* Descrição */}
         <div className="mt-12 bg-white rounded-lg shadow-lg p-6 lg:p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Descrição</h2>
           <div 
             dangerouslySetInnerHTML={{ __html: product.description }} 
+            className="prose max-w-none"
           />
         </div>
 
-        {/* Produtos Relacionados */}
         {relatedProducts.length > 0 && (
           <div className="mt-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
@@ -230,7 +209,7 @@ export default function ProductPage() {
               {relatedProducts.map((relatedProduct) => (
                 <Link
                   key={relatedProduct.id}
-                  href={`/produto/${slugify(relatedProduct.name)}`} 
+                  href={`/produto/${relatedProduct.slug}`}
                   className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:-translate-y-2 hover:shadow-lg"
                 >
                   <div className="relative w-full h-48">

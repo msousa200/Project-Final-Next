@@ -470,7 +470,7 @@ const Header = () => {
             
             {/* Dropdown do Perfil - Versão Mobile */}
             {isProfileOpen && (
-              <div className="absolute top-12 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[1001]">
+              <div className="absolute top-12 -right-12 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[1001]">
                 {isAuthenticated ? (
                   <>
                     <Link

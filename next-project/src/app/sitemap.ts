@@ -6,12 +6,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   
   const products = await getProducts();
   
-  const productUrls = products.map(product => ({
-    url: `${baseUrl}/produto/${product.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }));
+  const productUrls = products.map(product => {
+    // Extrai explicitamente para uma variável local (importante)
+    const slug = product.slug;
+    return {
+      url: `${baseUrl}/produto/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    };
+  });
   
   return [
     {
