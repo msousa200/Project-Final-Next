@@ -40,7 +40,6 @@ function generateSpecsTable(specs: ProductSpecs): string {
 
   return `
     <div class="space-y-4">
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">Especificações do Produto</h3>
       
       <div class="w-full md:w-1/2">
         <!-- Tabela Condensada (sempre visível) -->

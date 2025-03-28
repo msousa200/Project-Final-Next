@@ -193,7 +193,7 @@ export default function ProductPage() {
         </div>
 
         <div className="mt-12 bg-white rounded-lg shadow-lg p-6 lg:p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Descrição</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Especificações do Produto</h2>
           <div 
             dangerouslySetInnerHTML={{ __html: product.description }} 
             className="prose max-w-none"

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     default: 'Perfect Hour | Relógios de Luxo',
     template: '%s | Perfect Hour'
   },
-  description: 'Descubra nossa coleção exclusiva de relógios de luxo das melhores marcas...',
+  description: 'Descobre a nossa coleção exclusiva de relógios de luxo das melhores marcas...',
   keywords: ['relógios de luxo', 'watches', 'Boss', 'Calvin Klein', 'Gant', 'relógios masculinos', 'relógios femininos'],
   authors: [{ name: 'Perfect Hour' }],
   creator: 'Perfect Hour',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     locale: 'pt_PT',
     siteName: 'Perfect Hour',
     title: 'Perfect Hour | Relógios de Luxo',
-    description: 'Descubra nossa coleção exclusiva de relógios de luxo das melhores marcas.',
+    description: 'Descobre a nossa coleção exclusiva de relógios de luxo das melhores marcas.',
     images: [
       {
         url: '/logotipo.jpg', 
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Perfect Hour | Relógios de Luxo',
-    description: 'Descubra nossa coleção exclusiva de relógios de luxo das melhores marcas.',
+    description: 'Descobre a nossa coleção exclusiva de relógios de luxo das melhores marcas.',
     images: ['/logotipo.jpg'], 
   },
   icons: {
