@@ -1,10 +1,10 @@
 # Perfect Hour
 
-## 📋 Sobre o Projeto
+##  Sobre o Projeto
 
 Uma plataforma sofisticada de e-commerce especializada em relógios de luxo, desenvolvida com Next.js 14, TypeScript e tecnologias modernas.
 
-## ✨ Funcionalidades
+##  Funcionalidades
 
 ## Experiência do Usuário
 
@@ -18,7 +18,7 @@ Uma plataforma sofisticada de e-commerce especializada em relógios de luxo, des
 - Histórico de Pedidos com detalhes de rastreamento
 - Perfil do Usuário com autenticação segura
 
-## 🛠️ Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 - **Frontend:**
   - Next.js 15
@@ -38,7 +38,7 @@ Uma plataforma sofisticada de e-commerce especializada em relógios de luxo, des
   - Jest (testes)
   - ESLint
 
-## 🚀 Começando
+## Iniciar
 
 ### Pré-requisitos
 
@@ -69,7 +69,7 @@ bun install
 
 4. Abre http://localhost:3000 no teu browser
 
-## 💡 Destaques Técnicos
+##  Destaques Técnicos
 
 ### Autenticação
 - Login/Registro: Sistema seguro com gerenciamento de sessões
