@@ -39,14 +39,14 @@ export default function SuccessPage() {
               href="/orders" 
               className="block w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-900 transition-colors"
             >
-              Ver Meus Pedidos
+              Ver os Meus Pedidos
             </Link>
             
             <Link 
               href="/" 
               className="block w-full py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              Continuar Comprando
+              Continuar a comprar
             </Link>
           </div>
         </div>

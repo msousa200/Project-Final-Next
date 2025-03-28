@@ -222,10 +222,18 @@ export default function ProductPage() {
                     />
                   </div>
                   <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
-                      {relatedProduct.name}
+                    {/* Nome da marca em destaque */}
+                    <h3 className="text-lg font-bold text-gray-900 mb-1 uppercase tracking-wide">
+                      {brandNames[relatedProduct.brandId] || "MARCA"}
                     </h3>
-                    <p className="text-gray-600 mt-2">
+                    
+                    {/* Nome do relógio completo com tamanho menor */}
+                    <p className="text-xs text-gray-700 mb-2 min-h-[32px] break-words">
+                      {relatedProduct.name}
+                    </p>
+                    
+                    {/* Preço mantido no final */}
+                    <p className="text-gray-600 mt-2 font-medium">
                       {formatPrice(relatedProduct.price)}
                     </p>
                   </div>
