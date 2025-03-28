@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Perfect Hour
 
-## Getting Started
+## 📋 Sobre o Projeto
 
-First, run the development server:
+Uma plataforma sofisticada de e-commerce especializada em relógios de luxo, desenvolvida com Next.js 14, TypeScript e tecnologias modernas.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Funcionalidades
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Experiência do Usuário
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Catálogo Completo com coleções masculinas e femininas
+- Filtros Avançados por marcas (BOSS, Calvin Klein, Hamilton, etc.)
+- Recomendações Inteligentes baseadas em relevância de marca e categoria
+- Design Responsivo otimizado para todos os dispositivos
+- Processo de Compra
+- Carrinho Intuitivo com persistência via Redux
+- Checkout em Etapas com opções de envio e pagamento
+- Histórico de Pedidos com detalhes de rastreamento
+- Perfil do Usuário com autenticação segura
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tecnologias Utilizadas
 
-## Learn More
+- **Frontend:**
+  - Next.js 15
+  - React 18
+  - TypeScript
+  - Tailwind CSS
+  - Framer Motion
+  - React Icons
+  - Swiper (carrossel)
 
-To learn more about Next.js, take a look at the following resources:
+- **Backend:**
+  - Prisma (ORM)
+  - NextAuth.js (autenticação)
+  - Firebase
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Ferramentas de Desenvolvimento:**
+  - Jest (testes)
+  - ESLint
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Começando
 
-## Deploy on Vercel
+### Pré-requisitos
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Node.js (versão recomendada: 18.x ou superior)
+- npm, yarn, pnpm ou bun
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Instalação
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/msousa200/Project-Final-Next.git
+   cd Project-Final-Next/next-project
+
+2. Instale as dependências
+bash
+npm install
+Ou, se preferir usar outro gerenciador de pacotes:
+
+bash
+# Usando Yarn
+yarn install
+
+# Usando PNPM
+pnpm install
+
+# Usando Bun
+bun install
+
+4. Abre http://localhost:3000 no teu browser
+
+## 💡 Destaques Técnicos
+
+### Autenticação
+- Login/Registro: Sistema seguro com gerenciamento de sessões
+- Rotas Protegidas: Middleware para áreas restritas
+
+### Produtos
+- Catálogo Dinâmico: Filtros por marca, preço e categoria
+- Páginas Detalhadas: Fotos em alta resolução e especificações técnicas
+
+### Carrinho
+- Persistência: Dados salvos mesmo após recarregar a página
+- Checkout: Processo simplificado em etapas
+
+### UI/UX
+- Mobile-First: Design adaptável a todos os dispositivos
+- Feedback Visual: Toasts para ações do usuário
